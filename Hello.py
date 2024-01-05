@@ -20,29 +20,26 @@ LOGGER = get_logger(__name__)
 
 def run():
     st.set_page_config(
-        page_title="Hello",
+        page_title="WUNDER data checker",
         page_icon="👋",
     )
 
     st.write("# Welcome to the WUNDER data checker! 👋")
 
-    st.sidebar.success("Select a demo above.")
+    st.sidebar.success("Select a group of variables you like to explore.")
 
     st.markdown(
         """
-        Streamlit is an open-source app framework built specifically for
-        Machine Learning and Data Science projects.
-        **👈 Select a demo from the sidebar** to see some examples
-        of what Streamlit can do!
-        ### Want to learn more?
-        - Check out [streamlit.io](https://streamlit.io)
-        - Jump into our [documentation](https://docs.streamlit.io)
-        - Ask a question in our [community
-          forums](https://discuss.streamlit.io)
-        ### See more complex demos
-        - Use a neural net to [analyze the Udacity Self-driving Car Image
-          Dataset](https://github.com/streamlit/demo-self-driving)
-        - Explore a [New York City rideshare dataset](https://github.com/streamlit/demo-uber-nyc-pickups)
+        With this app you are able to quickly check the data gathered within the WUNDER project on a near real time basis
+        **👈 Select a group of variables** to start checking.
+        ### More information about the WUNDER project can be found on the offical webpage:
+        - https://www.itc.nl/about-itc/scientific-departments/water-resources/wunder-project/
+        ### Contact?
+        - Liduin Bos-Burgering (TU Delft, Deltares)
+        - Miriam Coenders (TU Delft)
+        - Gijs Vis (TU Delft)
+        - Bob Su (UTwente)
+        - Yijian Zeng (UTwente)
     """
     )
 
