@@ -1,7 +1,7 @@
 altair
-plotly
 numpy
 pandas
 pydeck
 streamlit
 requests
+plotly
