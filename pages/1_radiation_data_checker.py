@@ -57,6 +57,7 @@ pio.renderers.default='browser'
 pd.options.plotting.backend = "plotly"
 # pio.templates.default = "plotly"
 fig = df2.plot(x='TIMESTAMP',y=['Rs_in','Rs_out','Rl_in','Rl_out'])
+fig.update_layout(hovermode="x unified")
 
 ## create simple dashboard
 st.plotly_chart(fig)
