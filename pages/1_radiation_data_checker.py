@@ -27,8 +27,8 @@ import datetime
 date = "20231201"
 today = datetime.date.today()
 history = today - datetime.timedelta(days=3)
-end_date = st.date_input('Start date', today)
-start_date = st.date_input('End date', history)
+end_date = st.date_input('End date', today)
+start_date = st.date_input('Start date', history)
 if start_date < end_date:
     st.success('Start date: `%s`\n\nEnd date:`%s`' % (start_date, end_date))
 else:
