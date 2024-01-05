@@ -14,7 +14,7 @@
 
 import streamlit as st
 from streamlit.logger import get_logger
-#from st_pages import Page, show_pages, add_page_title
+from st_pages import Page, show_pages, add_page_title
 
 LOGGER = get_logger(__name__)
 
