@@ -34,29 +34,42 @@ if start_date < end_date:
 else:
     st.error('Error: End date must fall after start date.')
 
+daterange = [d.strftime('%Y%m%d') for d in pd.date_range(start_date,end_date)]
+
+## select parameter set
+pars = "cnr4"
+
+## account credentials of ftp server from where data will be downloaded
+username = 'liduin'
+password = 'WunDer@2024;'
+
 # Download data files
 # by making use of the requests python package
 # and for the selected date range
-pars = "cnr4"
-url = "http://liduin:WunDer@2024;@majisysdemo.itc.utwente.nl/wunder/logger_files/Wenumseveld_EC/CR3000_Wenumseveld_"+pars+"_ts"+date+".dat"
-username = 'liduin'
-password = 'WunDer@2024;'
-urlData = requests.get(url, auth=(username, password)).content
-
-## transform requests format to pandas
-# https://stackoverflow.com/questions/39213597/convert-text-data-from-requests-object-to-dataframe-with-pandas
-rawData = pd.read_csv(io.StringIO(urlData.decode('utf-8')))
-
-## remove header lines (1 and 2, keep 0 since this includes the abbreviation of the parameters)
-df = rawData.drop([1,2]).reset_index(drop=True)
-df.columns = df.iloc[0] ##--> header is not fully set yet, is now in row 0
-df2 = df.drop([0]).reset_index(drop=True)
+i=0
+for date in daterange:
+    url = "http://liduin:WunDer@2024;@majisysdemo.itc.utwente.nl/wunder/logger_files/Wenumseveld_EC/CR3000_Wenumseveld_"+pars+"_ts"+date+".dat"
+    ## download url
+    urlData = requests.get(url, auth=(username, password)).content
+    ## transform requests format to pandas
+    # https://stackoverflow.com/questions/39213597/convert-text-data-from-requests-object-to-dataframe-with-pandas
+    rawData = pd.read_csv(io.StringIO(urlData.decode('utf-8')))
+    ## remove header lines (1 and 2, keep 0 since this includes the abbreviation of the parameters)
+    df = rawData.drop([1,2]).reset_index(drop=True)
+    df.columns = df.iloc[0] ##--> header is not fully set yet, is now in row 0
+    df2 = df.drop([0]).reset_index(drop=True)
+    ## concatenate all data to 1 dateframe
+    if i==0:
+        df_all = df2
+    else:
+        df_all = pd.concat([df_all,df2])
+    i+=1
 
 ## plot with plotly
 pio.renderers.default='browser'
 pd.options.plotting.backend = "plotly"
 # pio.templates.default = "plotly"
-fig = df2.plot(x='TIMESTAMP',y=['Rs_in','Rs_out','Rl_in','Rl_out'])
+fig = df_all.plot(x='TIMESTAMP',y=['Rs_in','Rs_out','Rl_in','Rl_out'])
 fig.update_layout(hovermode="x unified")
 
 ## create simple dashboard
