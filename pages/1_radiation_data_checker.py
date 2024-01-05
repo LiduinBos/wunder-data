@@ -33,6 +33,7 @@ if start_date < end_date:
 else:
     st.error('Error: End date must fall after start date.')
 
+## set date range for data to be downloaded
 daterange = [d.strftime('%Y%m%d') for d in pd.date_range(start_date,end_date)]
 
 ## select parameter set
