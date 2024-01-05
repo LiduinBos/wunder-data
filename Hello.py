@@ -14,6 +14,7 @@
 
 import streamlit as st
 from streamlit.logger import get_logger
+from st_pages import Page, show_pages, add_page_title
 
 LOGGER = get_logger(__name__)
 
@@ -22,6 +23,15 @@ def run():
     st.set_page_config(
         page_title="WUNDER data checker",
         page_icon="👋",
+    )
+
+    # Specify what pages should be shown in the sidebar, and what their titles 
+    # and icons should be
+    show_pages(
+        [
+            Page("Hello.py", "Home", "🏠"),
+            Page("pages/1_radiation_data_checker.py", "Radiation", ":sun:"),
+        ]
     )
 
     st.write("# Welcome to the WUNDER data checker! 👋")
