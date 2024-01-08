@@ -68,11 +68,14 @@ for date in daterange:
         df_all = pd.concat([df_all,df2])
     i+=1
 
+## determine net radiation
+df_all['Rn'] =  df_all['Rs_in']+df_all['Rs_out']+df_all['Rl_in']+df_all['Rl_out']
+
 ## plot with plotly
 pio.renderers.default='browser'
 pd.options.plotting.backend = "plotly"
 # pio.templates.default = "plotly"
-fig = df_all.plot(x='TIMESTAMP',y=['Rs_in','Rs_out','Rl_in','Rl_out'])
+fig = df_all.plot(x='TIMESTAMP',y=['Rs_in','Rs_out','Rl_in','Rl_out','Rn'])
 fig.update_layout(hovermode="x unified",xaxis_title=None,yaxis_title='Radiation [W/m2]')
 ## set date range maximum on end_date + 1
 if end_date==today:
@@ -82,3 +85,6 @@ else:
 
 ## create simple dashboard
 st.plotly_chart(fig)
+
+## to do:
+## plot Rn as well --> is also stored in crn4_data file instead of in crn4 file 

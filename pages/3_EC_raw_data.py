@@ -73,7 +73,7 @@ pio.renderers.default='browser'
 pd.options.plotting.backend = "plotly"
 # pio.templates.default = "plotly"
 fig = df_all.plot(x='TIMESTAMP',y=['Ux','Uy','Uz'])
-fig.update_layout(hovermode="x unified",xaxis_title=None,yaxis_title='Soil heatflux [W/m^2]')
+fig.update_layout(hovermode="x unified",xaxis_title=None,yaxis_title='windflux [m/s]')
 ## set date range maximum on end_date + 1
 if end_date==today:
     fig.update_xaxes(range = [start_date,today])
