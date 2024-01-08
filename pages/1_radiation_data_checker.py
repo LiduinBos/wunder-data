@@ -25,7 +25,7 @@ import datetime
 # set start and end date
 # make it variables that can be chosen in the app as a given range
 today = datetime.date.today()
-history = today - datetime.timedelta(days=3)
+history = today - datetime.timedelta(days=7)
 start_date = st.date_input('Start date', history,min_value=datetime.datetime(2023, 12, 1),max_value=today - datetime.timedelta(days=2))
 ## set max end_date on today - 1 day since data is only stored till midnight of today
 end_date_max = today - datetime.timedelta(days=1)
@@ -37,7 +37,7 @@ else:
     st.error('Error: End date must fall after start date.')
 
 ## set date range for data to be downloaded
-daterange = [d.strftime('%Y%m%d') for d in pd.date_range(start_date,end_date)]
+daterange = [d.strftime('%Y%m%d') for d in pd.date_range(start_date,end_date + datetime.timedelta(days=1))]
 
 ## select parameter set
 pars = "cnr4"
