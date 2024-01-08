@@ -27,10 +27,12 @@ import datetime
 today = datetime.date.today()
 history = today - datetime.timedelta(days=3)
 start_date = st.date_input('Start date', history,min_value=datetime.datetime(2023, 12, 1),max_value=today - datetime.timedelta(days=2))
+## set max end_date on today - 1 day since data is only stored till midnight of today
 end_date_max = today - datetime.timedelta(days=1)
 end_date = st.date_input('End date', end_date_max,min_value=datetime.datetime(2023, 12, 1),max_value=end_date_max)
 if start_date < end_date:
-    st.success('Start date: `%s`\n\nEnd date:`%s`' % (start_date, end_date))
+    # st.success('Start date: `%s`\n\nEnd date:`%s`' % (start_date, end_date))
+    pass
 else:
     st.error('Error: End date must fall after start date.')
 
@@ -72,6 +74,7 @@ pd.options.plotting.backend = "plotly"
 # pio.templates.default = "plotly"
 fig = df_all.plot(x='TIMESTAMP',y=['Rs_in','Rs_out','Rl_in','Rl_out'])
 fig.update_layout(hovermode="x unified")
+## set date range maximum on end_date + 1
 if end_date==today:
     fig.update_xaxes(range = [start_date,today])
 else:
