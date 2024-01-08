@@ -26,8 +26,8 @@ import datetime
 # make it variables that can be chosen in the app as a given range
 today = datetime.date.today()
 history = today - datetime.timedelta(days=3)
-start_date = st.date_input('Start date', history,min_value=datetime.datetime(2023, 12, 1),max_value=today)
-end_date = st.date_input('End date', today,min_value=datetime.datetime(2023, 12, 1),max_value=today)
+start_date = st.date_input('Start date', history,min_value=datetime.datetime(2023, 12, 1),max_value=today - datetime.timedelta(days=2))
+end_date = st.date_input('End date', today,min_value=datetime.datetime(2023, 12, 1),max_value=today - datetime.timedelta(days=1))
 if start_date < end_date:
     st.success('Start date: `%s`\n\nEnd date:`%s`' % (start_date, end_date))
 else:
