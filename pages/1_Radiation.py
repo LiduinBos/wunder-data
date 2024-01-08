@@ -69,7 +69,11 @@ for date in daterange:
     i+=1
 
 ## determine net radiation
-df_all['Rn'] =  df_all['Rs_in']+df_all['Rs_out']+df_all['Rl_in']+df_all['Rl_out']
+df_all['Rs_in'] = pd.to_numeric(df_all['Rs_in'])
+df_all['Rs_out'] = pd.to_numeric(df_all['Rs_out'])
+df_all['Rl_in'] = pd.to_numeric(df_all['Rl_in'])
+df_all['Rl_out'] = pd.to_numeric(df_all['Rl_out'])
+df_all['Rn'] =  (df_all['Rs_in']-df_all['Rs_out'])+(df_all['Rl_in']-df_all['Rl_out'])
 
 ## plot with plotly
 pio.renderers.default='browser'
