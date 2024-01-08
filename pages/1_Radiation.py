@@ -69,7 +69,7 @@ for date in daterange:
     i+=1
 
 ## determine net radiation
-df_all['Rn'] =  df_all['Rs_in'] + df_all['Rs_out']
+df_all['Rn'] =  df.assign(Rns=df_all['Rs_in'] - df_all['Rs_out'])
 
 ## plot with plotly
 pio.renderers.default='browser'
