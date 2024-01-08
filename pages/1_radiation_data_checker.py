@@ -25,7 +25,6 @@ import datetime
 # set start and end date
 # make it variables that can be chosen in the app as a given range
 today = datetime.date.today()
-print(today)
 history = today - datetime.timedelta(days=3)
 start_date = st.date_input('Start date', history,min_value=datetime.datetime(2023, 12, 1),max_value=today)
 end_date = st.date_input('End date', today,min_value=datetime.datetime(2023, 12, 1),max_value=today)
@@ -74,7 +73,8 @@ fig = df_all.plot(x='TIMESTAMP',y=['Rs_in','Rs_out','Rl_in','Rl_out'])
 fig.update_layout(hovermode="x unified")
 if end_date==today:
     fig.update_xaxes(range = [start_date,today-datetime.timedelta(days=1)])
-
+else:
+    fig.update_xaxes(range = [start_date,end_date])
 
 ## create simple dashboard
 st.plotly_chart(fig)
