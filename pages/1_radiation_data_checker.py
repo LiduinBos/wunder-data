@@ -71,7 +71,7 @@ pd.options.plotting.backend = "plotly"
 # pio.templates.default = "plotly"
 fig = df_all.plot(x='TIMESTAMP',y=['Rs_in','Rs_out','Rl_in','Rl_out'])
 fig.update_layout(hovermode="x unified")
-fig.update_xaxes(range = [start_date,end_date])
+fig.update_xaxes(range = [start_date,today-datetime.timedelta(days=1)])
 
 ## create simple dashboard
 st.plotly_chart(fig)
