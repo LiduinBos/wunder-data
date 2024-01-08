@@ -73,7 +73,7 @@ pio.renderers.default='browser'
 pd.options.plotting.backend = "plotly"
 # pio.templates.default = "plotly"
 fig = df_all.plot(x='TIMESTAMP',y=['Rs_in','Rs_out','Rl_in','Rl_out'])
-fig.update_layout(hovermode="x unified")
+fig.update_layout(hovermode="x unified",xaxis_title='date',yaxis_title='Radiation [W/m2]')
 ## set date range maximum on end_date + 1
 if end_date==today:
     fig.update_xaxes(range = [start_date,today])
