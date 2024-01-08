@@ -40,7 +40,7 @@ else:
 daterange = [d.strftime('%Y%m%d') for d in pd.date_range(start_date,end_date + datetime.timedelta(days=1))]
 
 ## select parameter set
-pars = "soil_hf"
+pars = "ts_data"
 
 ## account credentials of ftp server from where data will be downloaded
 username = 'liduin'
@@ -72,7 +72,7 @@ for date in daterange:
 pio.renderers.default='browser'
 pd.options.plotting.backend = "plotly"
 # pio.templates.default = "plotly"
-fig = df_all.plot(x='TIMESTAMP',y=['shf_Avg(1)','shf_Avg(2)','shf_Avg(3)','shf_Avg(4)'])
+fig = df_all.plot(x='TIMESTAMP',y=['Ux','Uy','Uz'])
 fig.update_layout(hovermode="x unified",xaxis_title=None,yaxis_title='Soil heatflux [W/m^2]')
 ## set date range maximum on end_date + 1
 if end_date==today:
