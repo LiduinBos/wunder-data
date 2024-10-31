@@ -9,7 +9,7 @@ st.title('ZENTRA Cloud API Caller')
 # Device Serial Number
 stnr = 'z6-08820'
 
-# Define function to make API requests with authorization token
+# Function to make API requests with authorization token
 def get_with_credentials(tok, uri, **kwargs):
     token = tok if tok.lower().startswith("token") else f"Token {tok}"
     headers = {"Authorization": token}
@@ -32,13 +32,16 @@ def get_readings_response(sn, start_date, end_date, **extra_kwargs_for_endpoint)
     tok = extra_kwargs_for_endpoint.pop("token", "")
     return get_with_credentials(tok, url, params=data)
 
-# Function to parse response into DataFrame
+# Parse and Display JSON Data in DataFrame
 def get_readings_dataframe(sn, start_date, end_date, **extra_kwargs_for_endpoint):
     res = get_readings_response(sn, start_date, end_date, **extra_kwargs_for_endpoint)
     if res.ok:
         try:
             data = res.json().get("data", [])
-            return pd.DataFrame(data)
+            st.write("Raw Data:", data)  # Display raw data to inspect
+            # Normalize and handle any nested or irregular fields
+            df = pd.json_normalize(data, errors='ignore')
+            return df
         except json.JSONDecodeError:
             st.error("Error decoding JSON response.")
     else:
@@ -57,7 +60,7 @@ server = "https://zentracloud.com"
 # Make API Call Button
 if st.button('Make API Call'):
     try:
-        # Attempt to retrieve data as DataFrame
+        # Retrieve data as DataFrame
         df = get_readings_dataframe(sn, start_date, end_date, token=tok, server=server)
 
         # Check if DataFrame is not empty
