@@ -52,9 +52,9 @@ server="https://zentracloud.com"
 if st.button('Make API Call'):
     try:
        # data = eval(data_input) 
-       df = get_readings_dataframe(sn, start_date, end_date, token=tok, server=server)
+       # df = get_readings_dataframe(sn, start_date, end_date, token=tok, server=server)
        # print(df)
-
+       response = get_readings_response(sn,start_date,end_date,token=tok, server=server)
 
        # Check the response
        if response.status_code == 200:
