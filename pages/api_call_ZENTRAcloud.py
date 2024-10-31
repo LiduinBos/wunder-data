@@ -52,6 +52,8 @@ if st.button('Make API Call'):
     try:
         df = get_readings_dataframe(sn, start_date, end_date, token=tok, server=server)
         print(df)
+    except Exception as e:
+        st.error(f'An error occurred: {e}')
 
 # if st.button('Make API Call'):
 #     try:
