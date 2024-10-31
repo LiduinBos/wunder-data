@@ -8,7 +8,7 @@ stnr = 'z6-08820'
 
 # Input for API endpoint and data
 api_url = st.text_input('API Endpoint URL', 'https://zentracloud.com/api/v4/'+stnr)
-data_input = st.text_area('Request Data (JSON)', '{"key": "value"}')
+data_input = st.text_area('Request Data (JSON)', '{"key": "f9e6d698624c76340adde78b22a9c6ff514c6e42"}')
 
 if st.button('Make API Call'):
     try:
