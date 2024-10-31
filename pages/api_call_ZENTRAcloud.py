@@ -53,15 +53,15 @@ if st.button('Make API Call'):
     try:
        # data = eval(data_input) 
        df = get_readings_dataframe(sn, start_date, end_date, token=tok, server=server)
-        # print(df)
+       # print(df)
 
 
-        # Check the response
-        if response.status_code == 200:
-            st.success('API Call Successful!')
-            st.json(response.json())
-        else:
-            st.error(f'Error: {response.status_code} - {response.text}')
+       # Check the response
+       if response.status_code == 200:
+           st.success('API Call Successful!')
+           st.json(response.json())
+       else:
+           st.error(f'Error: {response.status_code} - {response.text}')
 
     except Exception as e:
         st.error(f'An error occurred: {e}')
