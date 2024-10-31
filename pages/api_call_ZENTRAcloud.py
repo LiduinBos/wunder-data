@@ -7,7 +7,7 @@ st.title('ZENTRA Cloud API Caller')
 stnr = 'z6-08820'
 
 # Input for API endpoint and data
-api_url = st.text_input('API Endpoint URL', 'https://api.zentracloud.com/data/'+stnr)
+api_url = st.text_input('API Endpoint URL', 'https://zentracloud.com/api/v4/data/'+stnr)
 data_input = st.text_area('Request Data (JSON)', '{"key": "value"}')
 
 if st.button('Make API Call'):
