@@ -35,10 +35,10 @@ def get_with_credentials(tok, uri, **kwargs):
     return requests.get(uri, headers=headers, **kwargs)
 
 # Function to handle pagination and minimize requests
-def get_readings_response_eff(sn, start_date, end_date, token, variables, **extra_kwargs_for_endpoint):
+def get_readings_response_eff(sn, start_date, end_date, token, **extra_kwargs_for_endpoint):
     server = extra_kwargs_for_endpoint.get("server", "https://zentracloud.com")
     url = f"{server}/api/v4/get_readings/"
-
+    
     # Request parameters for larger data chunks
     default_args = {
         'output_format': "json",
@@ -48,11 +48,11 @@ def get_readings_response_eff(sn, start_date, end_date, token, variables, **extr
         'start_date': start_date,
         'end_date': end_date
     }
-
+    
     data = {**default_args, **extra_kwargs_for_endpoint, "device_sn": sn}
-    all_readings = {var: [] for var in variables}  # Dictionary to store all data for each variable
+    all_readings = []  # To store all the data collected
 
-    # Loop for pagination (expecting fewer pages now due to per_page=1000)
+    # Loop for pagination (we only expect 1 page now due to per_page=1000)
     page_num = 1
     while True:
         data['page_num'] = page_num
@@ -71,48 +71,39 @@ def get_readings_response_eff(sn, start_date, end_date, token, variables, **extr
 
         # Parse the JSON response
         json_data = response.json()
+        air_temp_readings = json_data.get("data", {}).get("Air Temperature", [])
 
-        # Loop over the selected variables and extract data for each one
-        for var in variables:
-            readings = json_data.get("data", {}).get(var, [])
-            if readings:
-                all_readings[var].extend(readings)
-
-        # Break the loop if no more data is available
-        if all(len(readings) == 0 for readings in all_readings.values()):
+        if not air_temp_readings:
+            # No more data to fetch
             break
 
-        # Increment the page number for the next iteration
-        page_num += 1
+        all_readings.extend(air_temp_readings)  # Append current page data to all_readings
+        page_num += 1  # Increment page number for next request
 
-    return all_readings  # Return all data collected
+    return all_readings
 
-# Function to extract and normalize multiple variables' data
-def extract_data(all_readings, variables):
+# Function to extract and normalize "Air Temperature" data
+def extract_air_temperature_data(all_readings):
     extracted_data = []
-
-    for var in variables:
-        readings = all_readings.get(var, [])
-        if readings:
-            for entry in readings:
-                metadata = entry.get("metadata", {})
-                data_readings = entry.get("readings", [])
-                # Combine metadata with each reading for each variable
-                for reading in data_readings:
-                    combined = {**metadata, **reading, 'variable': var}
-                    extracted_data.append(combined)
-
+    for entry in all_readings:
+        metadata = entry.get("metadata", {})
+        readings = entry.get("readings", [])
+        for reading in readings:
+            combined = {**metadata, **reading}
+            extracted_data.append(combined)
+    
     if extracted_data:
         return pd.DataFrame(extracted_data)  # Return the combined data as a DataFrame
     else:
-        st.warning("No readings found in the data.")
+        st.warning("No 'Air Temperature' readings found in the data.")
         return pd.DataFrame()
 
-# Function to retrieve and parse multiple variables' readings into a DataFrame
-def get_data_dataframe(sn, start_date, end_date, token, variables, **extra_kwargs_for_endpoint):
-    all_readings = get_readings_response_eff(sn, start_date, end_date, token, variables, **extra_kwargs_for_endpoint)
+# Function to retrieve and parse "Air Temperature" readings into a DataFrame
+def get_air_temperature_dataframe(sn, start_date, end_date, token, **extra_kwargs_for_endpoint):
+    all_readings = get_readings_response_eff(sn, start_date, end_date, token, **extra_kwargs_for_endpoint)
+    
     if all_readings:
-        return extract_data(all_readings, variables)
+        return extract_air_temperature_data(all_readings)
     return pd.DataFrame()
 
 # Fill in your token, device serial number, and date range
@@ -120,27 +111,24 @@ tok = "f9e6d698624c76340adde78b22a9c6ff514c6e42"
 sn = stnr
 server = "https://zentracloud.com"
 
-# List of variables to retrieve (e.g., 'Air Temperature', 'Precipitation')
-variables = ['Air Temperature', 'Precipitation']
-
 # Make API Call Button
 if st.button('Make API Call'):
     try:
         # Retrieve data as DataFrame
-        df = get_data_dataframe(sn, start_date, end_date, tok, variables, server=server)
+        df = get_air_temperature_dataframe(sn, start_date, end_date, tok, server=server)
 
         if not df.empty:
             st.success('API Call Successful!')
             st.dataframe(df)  # Display DataFrame in Streamlit
 
-            # Plot the data
+            # Plot the Air Temperature data
             if 'datetime' in df.columns and 'value' in df.columns:
                 # Convert 'datetime' column to pandas datetime type
                 df['datetime'] = pd.to_datetime(df['datetime'])
 
-                # Create a line plot using Plotly Express, grouped by 'variable'
-                fig = px.line(df, x='datetime', y='value', color='variable', title='Weather Data Over Time',
-                              labels={'datetime': 'Timestamp', 'value': 'Measurement'})
+                # Create a line plot using Plotly Express
+                fig = px.line(df, x='datetime', y='value', title='Air Temperature Over Time',
+                              labels={'datetime': 'Timestamp', 'value': 'Temperature (°C)'})
                 st.plotly_chart(fig)  # Display Plotly chart in Streamlit
         else:
             st.warning('No data retrieved. Check date range or device serial number.')
