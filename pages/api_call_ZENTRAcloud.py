@@ -34,38 +34,59 @@ def get_with_credentials(tok, uri, **kwargs):
     headers = {"Authorization": token}
     return requests.get(uri, headers=headers, **kwargs)
 
-# Function to call the API and get readings
-def get_readings_response(sn, start_date, end_date, **extra_kwargs_for_endpoint):
+# Function to call the API and handle pagination
+def get_readings_response_paginated(sn, start_date, end_date, **extra_kwargs_for_endpoint):
     server = extra_kwargs_for_endpoint.get("server", "https://zentracloud.com")
     url = f"{server}/api/v4/get_readings/"
+    
+    # Initialize variables for pagination
+    page_num = 1
+    per_page = 100  # Number of records per page
+    all_readings = []
 
-    default_args = {
-        'output_format': "json",
-        'per_page': 100,  # Adjust as needed
-        'page_num': 1,
-        'sort_by': 'desc',
-        'start_date': start_date,
-        'end_date': end_date
-    }
-    data = {**default_args, **extra_kwargs_for_endpoint, "device_sn": sn}
-    tok = extra_kwargs_for_endpoint.pop("token", "")
-    return get_with_credentials(tok, url, params=data)
+    while True:
+        # Prepare request parameters
+        default_args = {
+            'output_format': "json",
+            'per_page': per_page,
+            'page_num': page_num,
+            'sort_by': 'asc',  # Ascending order to fetch oldest readings first
+            'start_date': start_date,
+            'end_date': end_date
+        }
+        data = {**default_args, **extra_kwargs_for_endpoint, "device_sn": sn}
+        tok = extra_kwargs_for_endpoint.pop("token", "")
+        
+        # Make the API request
+        response = get_with_credentials(tok, url, params=data)
 
-# Function to extract and normalize JSON data
-def extract_data(json_data):
-    # Navigate to the "data" key first
-    data_section = json_data.get("data", {})
+        # Break the loop if the response is not OK
+        if not response.ok:
+            st.error(f"API request failed on page {page_num}: {response.status_code} - {response.text}")
+            break
 
-    # Ensure "Air Temperature" exists in the "data" section
-    if "Air Temperature" not in data_section:
-        st.warning('"Air Temperature" key not found in the JSON response.')
-        return pd.DataFrame()
+        # Parse the JSON response
+        json_data = response.json()
+        air_temp_readings = json_data.get("data", {}).get("Air Temperature", [])
 
+        if not air_temp_readings:
+            # No more data to fetch
+            break
+        
+        # Append current page's readings
+        all_readings.extend(air_temp_readings)
+
+        # Increment the page number for the next iteration
+        page_num += 1
+
+    return all_readings
+
+# Function to extract and normalize "Air Temperature" data
+def extract_air_temperature_data(all_readings):
     # Initialize an empty list to store processed records
     extracted_data = []
 
-    # Loop through "Air Temperature" entries in JSON data
-    for entry in data_section.get("Air Temperature", []):
+    for entry in all_readings:
         metadata = entry.get("metadata", {})
         readings = entry.get("readings", [])
         
@@ -78,24 +99,14 @@ def extract_data(json_data):
     if extracted_data:
         return pd.DataFrame(extracted_data)
     else:
-        st.warning("No readings found in the 'Air Temperature' data.")
+        st.warning("No 'Air Temperature' readings found in the data.")
         return pd.DataFrame()
 
-# Function to parse API response and extract data
-def get_readings_dataframe(sn, start_date, end_date, **extra_kwargs_for_endpoint):
-    res = get_readings_response(sn, start_date, end_date, **extra_kwargs_for_endpoint)
-    if res.ok:
-        try:
-            json_data = res.json()  # Get full JSON response
-            ## st.write(json_data)
-            # Extract and normalize JSON data
-            df = extract_data(json_data)
-            ## st.write(df)
-            return df
-        except json.JSONDecodeError:
-            st.error("Error decoding JSON response.")
-    else:
-        st.error(f"Failed to retrieve data: {res.status_code} - {res.text}")
+# Function to retrieve and parse "Air Temperature" readings into a DataFrame
+def get_air_temperature_dataframe(sn, start_date, end_date, **extra_kwargs_for_endpoint):
+    all_readings = get_readings_response_paginated(sn, start_date, end_date, **extra_kwargs_for_endpoint)
+    if all_readings:
+        return extract_air_temperature_data(all_readings)
     return pd.DataFrame()
 
 # Fill in your token, device serial number, and date range
@@ -107,16 +118,17 @@ server = "https://zentracloud.com"
 if st.button('Make API Call'):
     try:
         # Retrieve data as DataFrame
-        df_extract = get_readings_dataframe(sn, start_date, end_date, token=tok, server=server)
+        df = get_air_temperature_dataframe(sn, start_date, end_date, token=tok, server=server)
 
         # Check if DataFrame is not empty
-        if not df_extract.empty:
+        if not df.empty:
             st.success('API Call Successful!')
-            st.dataframe(df_extract)  # Display DataFrame in Streamlit
+            st.dataframe(df)  # Display DataFrame in Streamlit
         else:
             st.warning('No data retrieved. Check date range or device serial number.')
     except Exception as e:
         st.error(f'An error occurred: {e}')
+
 
 ## plot with plotly
 pio.renderers.default='browser'
