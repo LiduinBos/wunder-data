@@ -34,7 +34,7 @@ def get_with_credentials(tok, uri, **kwargs):
     headers = {"Authorization": token}
     return requests.get(uri, headers=headers, **kwargs)
 
-# Function to call the API and handle pagination
+# Function to call the API and handle pagination with delay
 def get_readings_response_paginated(sn, start_date, end_date, token, **extra_kwargs_for_endpoint):
     server = extra_kwargs_for_endpoint.get("server", "https://zentracloud.com")
     url = f"{server}/api/v4/get_readings/"
@@ -42,7 +42,7 @@ def get_readings_response_paginated(sn, start_date, end_date, token, **extra_kwa
     # Initialize variables for pagination
     page_num = 1
     per_page = 100  # Number of records per page
-    all_readings = []
+    all_readings = []  # This list will hold all the data collected from all pages
 
     while True:
         # Prepare request parameters
@@ -50,7 +50,7 @@ def get_readings_response_paginated(sn, start_date, end_date, token, **extra_kwa
             'output_format': "json",
             'per_page': per_page,
             'page_num': page_num,
-            'sort_by': 'asc',  # Ascending order to fetch oldest readings first
+            'sort_by': 'asc',
             'start_date': start_date,
             'end_date': end_date
         }
@@ -62,6 +62,10 @@ def get_readings_response_paginated(sn, start_date, end_date, token, **extra_kwa
         # Break the loop if the response is not OK
         if not response.ok:
             st.error(f"API request failed on page {page_num}: {response.status_code} - {response.text}")
+            if response.status_code == 429:
+                st.warning("Rate limit reached. Waiting 60 seconds before retrying...")
+                time.sleep(60)  # Delay to handle rate limit
+                continue  # Retry the same page after the delay
             break
 
         # Parse the JSON response
@@ -72,17 +76,16 @@ def get_readings_response_paginated(sn, start_date, end_date, token, **extra_kwa
             # No more data to fetch
             break
         
-        # Append current page's readings
+        # Append current page's readings to the list
         all_readings.extend(air_temp_readings)
 
         # Increment the page number for the next iteration
         page_num += 1
 
-    return all_readings
+    return all_readings  # Return all data collected after all pages
 
 # Function to extract and normalize "Air Temperature" data
 def extract_air_temperature_data(all_readings):
-    # Initialize an empty list to store processed records
     extracted_data = []
 
     for entry in all_readings:
@@ -94,9 +97,8 @@ def extract_air_temperature_data(all_readings):
             combined = {**metadata, **reading}
             extracted_data.append(combined)
     
-    # Convert to DataFrame
     if extracted_data:
-        return pd.DataFrame(extracted_data)
+        return pd.DataFrame(extracted_data)  # Return the combined data as a DataFrame
     else:
         st.warning("No 'Air Temperature' readings found in the data.")
         return pd.DataFrame()
@@ -119,25 +121,27 @@ if st.button('Make API Call'):
         # Retrieve data as DataFrame
         df = get_air_temperature_dataframe(sn, start_date, end_date, tok, server=server)
 
-        # Check if DataFrame is not empty
         if not df.empty:
             st.success('API Call Successful!')
             st.dataframe(df)  # Display DataFrame in Streamlit
+
+            ## plot with plotly
+            pio.renderers.default='browser'
+            pd.options.plotting.backend = "plotly"
+            fig = df.plot(x='datetime',y='value')
+            fig.update_layout(hovermode="x unified",xaxis_title=None,yaxis_title='Atmospheric temperature [*C]')
+            ## set date range maximum on end_date + 1
+            if end_date==today:
+                fig.update_xaxes(range = [start_date,today])
+            else:
+                fig.update_xaxes(range = [start_date,end_date + datetime.timedelta(days=1)])
+            
+            ## create simple dashboard
+            st.plotly_chart(fig)
+        
         else:
             st.warning('No data retrieved. Check date range or device serial number.')
     except Exception as e:
         st.error(f'An error occurred: {e}')
 
-## plot with plotly
-pio.renderers.default='browser'
-pd.options.plotting.backend = "plotly"
-fig = df.plot(x='datetime',y='value')
-fig.update_layout(hovermode="x unified",xaxis_title=None,yaxis_title='Atmospheric temperature [*C]')
-## set date range maximum on end_date + 1
-if end_date==today:
-    fig.update_xaxes(range = [start_date,today])
-else:
-    fig.update_xaxes(range = [start_date,end_date + datetime.timedelta(days=1)])
 
-## create simple dashboard
-st.plotly_chart(fig)
