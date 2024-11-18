@@ -64,7 +64,6 @@ def extract_data(json_data):
             extracted_data.append(combined)
     
     # Convert to DataFrame
-    st.write(pd.DataFrame(extracted_data))
     return pd.DataFrame(extracted_data)
 
 # Function to parse API response and extract data
