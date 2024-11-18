@@ -6,6 +6,20 @@ import json
 # Streamlit app title
 st.title('ZENTRA Cloud API Caller')
 
+# set start and end date
+# make it variables that can be chosen in the app as a given range
+today = datetime.date.today()
+history = today - datetime.timedelta(days=7)
+start_date = st.date_input('Start date', history,min_value=datetime.datetime(2023, 12, 1),max_value=today - datetime.timedelta(days=2))
+## set max end_date on today - 1 day since data is only stored till midnight of today
+end_date_max = today - datetime.timedelta(days=1)
+end_date = st.date_input('End date', end_date_max,min_value=datetime.datetime(2023, 12, 1),max_value=end_date_max)
+if start_date < end_date:
+    # st.success('Start date: `%s`\n\nEnd date:`%s`' % (start_date, end_date))
+    pass
+else:
+    st.error('Error: End date must fall after start date.')
+
 # Device Serial Number
 stnr = 'z6-08820'
 
@@ -51,8 +65,8 @@ def get_readings_dataframe(sn, start_date, end_date, **extra_kwargs_for_endpoint
 # Fill in your token, device serial number, and date range
 tok = "f9e6d698624c76340adde78b22a9c6ff514c6e42"
 sn = stnr
-start_date = "2024-04-01 00:00:00"
-end_date = "2024-04-02 00:00:00"
+## start_date = "2024-04-01 00:00:00"
+## end_date = "2024-04-02 00:00:00"
 
 # Server URL
 server = "https://zentracloud.com"
