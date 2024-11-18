@@ -50,19 +50,22 @@ def get_readings_response(sn, start_date, end_date, **extra_kwargs_for_endpoint)
 
 # Function to extract and normalize JSON data
 def extract_data(json_data):
-    # Ensure "Air Temperature" exists in the JSON
-    if "Air Temperature" not in json_data:
+    # Navigate to the "data" key first
+    data_section = json_data.get("data", {})
+
+    # Ensure "Air Temperature" exists in the "data" section
+    if "Air Temperature" not in data_section:
         st.warning('"Air Temperature" key not found in the JSON response.')
         return pd.DataFrame()
-        
+
     # Initialize an empty list to store processed records
     extracted_data = []
 
     # Loop through "Air Temperature" entries in JSON data
-    for entry in json_data.get("Air Temperature", []):
+    for entry in data_section.get("Air Temperature", []):
         metadata = entry.get("metadata", {})
         readings = entry.get("readings", [])
-        st.write(entry)
+        
         # Combine metadata with each reading
         for reading in readings:
             combined = {**metadata, **reading}
