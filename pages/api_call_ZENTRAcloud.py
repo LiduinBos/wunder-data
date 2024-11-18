@@ -62,7 +62,8 @@ def get_readings_response_paginated(sn, start_date, end_date, token, **extra_kwa
 
         # Handle rate limit error (429) silently without logging the error message
         if response.status_code == 429:
-            st.warning("Rate limit reached. Waiting 60 seconds before retrying...")
+            ##st.warning("Rate limit reached. Waiting 60 seconds before retrying...")
+            st.warning("Reading data from the server might take a while since there is unfortunatelly a limit of calls to the API server per minute. Each day of data will add 60 seconds to the total loading time.")
             time.sleep(60)  # Wait for 60 seconds before retrying the request
             continue  # Retry the same page after the delay
 
