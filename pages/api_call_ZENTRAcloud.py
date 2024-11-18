@@ -4,7 +4,6 @@ import pandas as pd
 import json
 import datetime
 import time
-
 import plotly.io as pio
 import plotly.express as px
 
@@ -40,53 +39,36 @@ def get_readings_response_paginated(sn, start_date, end_date, token, **extra_kwa
     server = extra_kwargs_for_endpoint.get("server", "https://zentracloud.com")
     url = f"{server}/api/v4/get_readings/"
     
-    # Initialize variables for pagination
-    page_num = 1
-    per_page = 100  # Number of records per page
-    all_readings = []  # This list will hold all the data collected from all pages
+    # Prepare request parameters
+    default_args = {
+        'output_format': "json",
+        'per_page': 100,  # Number of records per page
+        'page_num': 1,    # Start at page 1
+        'sort_by': 'asc',
+        'start_date': start_date,
+        'end_date': end_date
+    }
+    
+    data = {**default_args, **extra_kwargs_for_endpoint, "device_sn": sn}
+    
+    # Make the API request
+    response = get_with_credentials(token, url, params=data)
 
-    while True:
-        # Prepare request parameters
-        default_args = {
-            'output_format': "json",
-            'per_page': per_page,
-            'page_num': page_num,
-            'sort_by': 'asc',
-            'start_date': start_date,
-            'end_date': end_date
-        }
-        data = {**default_args, **extra_kwargs_for_endpoint, "device_sn": sn}
-        
-        # Make the API request
-        response = get_with_credentials(token, url, params=data)
+    # Handle rate limit error (429) silently without logging the error message
+    if response.status_code == 429:
+        st.warning("Rate limit reached. Waiting 60 seconds before retrying...")
+        time.sleep(60)  # Wait for 60 seconds before retrying the request
+        return get_readings_response_paginated(sn, start_date, end_date, token, **extra_kwargs_for_endpoint)  # Retry
 
-        # Handle rate limit error (429) silently without logging the error message
-        if response.status_code == 429:
-            ##st.warning("Rate limit reached. Waiting 60 seconds before retrying...")
-            st.warning("Reading data from the server might take a while since there is unfortunatelly a limit of calls to the API server per minute. Each page with 100 datapoints will add 60 seconds to the total loading time.")
-            time.sleep(60)  # Wait for 60 seconds before retrying the request
-            continue  # Retry the same page after the delay
+    if not response.ok:
+        st.error(f"API request failed: {response.status_code} - {response.text}")
+        return []
 
-        # Break the loop if the response is not OK
-        if not response.ok:
-            st.error(f"API request failed on page {page_num}: {response.status_code} - {response.text}")
-            break
+    # Parse the JSON response
+    json_data = response.json()
+    air_temp_readings = json_data.get("data", {}).get("Air Temperature", [])
 
-        # Parse the JSON response
-        json_data = response.json()
-        air_temp_readings = json_data.get("data", {}).get("Air Temperature", [])
-
-        if not air_temp_readings:
-            # No more data to fetch
-            break
-        
-        # Append current page's readings to the list
-        all_readings.extend(air_temp_readings)
-
-        # Increment the page number for the next iteration
-        page_num += 1
-
-    return all_readings  # Return all data collected after all pages
+    return air_temp_readings
 
 # Function to extract and normalize "Air Temperature" data
 def extract_air_temperature_data(all_readings):
@@ -109,7 +91,9 @@ def extract_air_temperature_data(all_readings):
 
 # Function to retrieve and parse "Air Temperature" readings into a DataFrame
 def get_air_temperature_dataframe(sn, start_date, end_date, token, **extra_kwargs_for_endpoint):
+    # Request data for the full date range at once
     all_readings = get_readings_response_paginated(sn, start_date, end_date, token, **extra_kwargs_for_endpoint)
+    
     if all_readings:
         return extract_air_temperature_data(all_readings)
     return pd.DataFrame()
@@ -128,6 +112,16 @@ if st.button('Make API Call'):
         if not df.empty:
             st.success('API Call Successful!')
             st.dataframe(df)  # Display DataFrame in Streamlit
+
+            # Plot the Air Temperature data
+            if 'datetime' in df.columns and 'value' in df.columns:
+                # Convert 'datetime' column to pandas datetime type
+                df['datetime'] = pd.to_datetime(df['datetime'])
+
+                # Create a line plot using Plotly Express
+                fig = px.line(df, x='datetime', y='value', title='Air Temperature Over Time',
+                              labels={'datetime': 'Timestamp', 'value': 'Temperature (°C)'})
+                st.plotly_chart(fig)  # Display Plotly chart in Streamlit
         else:
             st.warning('No data retrieved. Check date range or device serial number.')
     except Exception as e:
