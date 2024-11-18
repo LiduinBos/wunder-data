@@ -127,7 +127,7 @@ variables = ['Air Temperature', 'Precipitation']
 if st.button('Make API Call'):
     try:
         # Retrieve data as DataFrame
-        df = get_air_temperature_dataframe(sn, start_date, end_date, tok, variables, server=server)
+        df = get_data_dataframe(sn, start_date, end_date, tok, variables, server=server)
 
         if not df.empty:
             st.success('API Call Successful!')
