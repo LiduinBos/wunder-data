@@ -91,12 +91,12 @@ server = "https://zentracloud.com"
 if st.button('Make API Call'):
     try:
         # Retrieve data as DataFrame
-        df = get_readings_dataframe(sn, start_date, end_date, token=tok, server=server)
+        df_extract = get_readings_dataframe(sn, start_date, end_date, token=tok, server=server)
 
         # Check if DataFrame is not empty
-        if not df.empty:
+        if not df_extract.empty:
             st.success('API Call Successful!')
-            st.dataframe(df)  # Display DataFrame in Streamlit
+            st.dataframe(df_extract)  # Display DataFrame in Streamlit
         else:
             st.warning('No data retrieved. Check date range or device serial number.')
     except Exception as e:
