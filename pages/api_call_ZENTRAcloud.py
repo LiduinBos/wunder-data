@@ -72,7 +72,6 @@ def get_readings_dataframe(sn, start_date, end_date, **extra_kwargs_for_endpoint
     if res.ok:
         try:
             json_data = res.json()  # Get full JSON response
-            ## st.write("Raw JSON Data:", json_data)  # Display raw data for inspection
             
             # Extract and normalize JSON data
             df = extract_data(json_data)
