@@ -133,7 +133,7 @@ if st.button('Make API Call'):
 ## plot with plotly
 pio.renderers.default='browser'
 pd.options.plotting.backend = "plotly"
-fig = df_extract.plot(x='datetime',y='value')
+fig = df.plot(x='datetime',y='value')
 fig.update_layout(hovermode="x unified",xaxis_title=None,yaxis_title='Atmospheric temperature [*C]')
 ## set date range maximum on end_date + 1
 if end_date==today:
