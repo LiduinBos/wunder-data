@@ -132,6 +132,7 @@ if st.button('Make API Call'):
         if not df.empty:
             st.success('API Call Successful!')
             st.dataframe(df)  # Display DataFrame in Streamlit
+            st.write(df)
 
             # Plot the Air Temperature data
             if 'datetime' in df.columns and 'value' in df.columns:
