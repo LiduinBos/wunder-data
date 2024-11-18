@@ -50,6 +50,11 @@ def get_readings_response(sn, start_date, end_date, **extra_kwargs_for_endpoint)
 
 # Function to extract and normalize JSON data
 def extract_data(json_data):
+    # Ensure "Air Temperature" exists in the JSON
+    if "Air Temperature" not in json_data:
+        st.warning('"Air Temperature" key not found in the JSON response.')
+        return pd.DataFrame()
+        
     # Initialize an empty list to store processed records
     extracted_data = []
 
@@ -64,7 +69,11 @@ def extract_data(json_data):
             extracted_data.append(combined)
     
     # Convert to DataFrame
-    return pd.DataFrame(extracted_data)
+    if extracted_data:
+        return pd.DataFrame(extracted_data)
+    else:
+        st.warning("No readings found in the 'Air Temperature' data.")
+        return pd.DataFrame()
 
 # Function to parse API response and extract data
 def get_readings_dataframe(sn, start_date, end_date, **extra_kwargs_for_endpoint):
