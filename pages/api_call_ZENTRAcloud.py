@@ -13,7 +13,7 @@ st.title('ZENTRA Cloud API Caller')
 
 # Set start and end date with date picker
 today = datetime.date.today()
-history = today - datetime.timedelta(days=7)
+history = today - datetime.timedelta(days=1)
 start_date = st.date_input(
     'Start date', history, min_value=datetime.datetime(2023, 12, 1), max_value=today - datetime.timedelta(days=2)
 )
