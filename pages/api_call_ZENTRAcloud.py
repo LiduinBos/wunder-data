@@ -75,6 +75,7 @@ def get_readings_dataframe(sn, start_date, end_date, **extra_kwargs_for_endpoint
             
             # Extract and normalize JSON data
             df = extract_data(json_data)
+            st.write(df)
             return df
         except json.JSONDecodeError:
             st.error("Error decoding JSON response.")
