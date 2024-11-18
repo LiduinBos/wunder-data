@@ -35,7 +35,7 @@ def get_with_credentials(tok, uri, **kwargs):
     return requests.get(uri, headers=headers, **kwargs)
 
 # Function to handle pagination and minimize requests
-def get_readings_response_eff(sn, start_date, end_date, token, **extra_kwargs_for_endpoint):
+def get_readings_response_eff(sn, start_date, end_date, token, variables, **extra_kwargs_for_endpoint):
     server = extra_kwargs_for_endpoint.get("server", "https://zentracloud.com")
     url = f"{server}/api/v4/get_readings/"
     
@@ -50,7 +50,7 @@ def get_readings_response_eff(sn, start_date, end_date, token, **extra_kwargs_fo
     }
     
     data = {**default_args, **extra_kwargs_for_endpoint, "device_sn": sn}
-    all_readings = []  # To store all the data collected
+    all_readings = {var: [] for var in variables}  # Dictionary to hold all data for each variable
 
     # Loop for pagination (we only expect 1 page now due to per_page=1000)
     page_num = 1
@@ -71,26 +71,35 @@ def get_readings_response_eff(sn, start_date, end_date, token, **extra_kwargs_fo
 
         # Parse the JSON response
         json_data = response.json()
-        air_temp_readings = json_data.get("data", {}).get("Air Temperature", [])
 
-        if not air_temp_readings:
-            # No more data to fetch
+        # Loop over the selected variables and extract data for each one
+        for var in variables:
+            readings = json_data.get("data", {}).get(var, [])
+            if readings:
+                all_readings[var].extend(readings)
+
+        # Break the loop if there is no more data
+        if all(len(readings) == 0 for readings in all_readings.values()):
             break
-
-        all_readings.extend(air_temp_readings)  # Append current page data to all_readings
+        
         page_num += 1  # Increment page number for next request
 
     return all_readings
 
 # Function to extract and normalize "Air Temperature" data
-def extract_air_temperature_data(all_readings):
+def extract_data(all_readings,variables):
     extracted_data = []
-    for entry in all_readings:
-        metadata = entry.get("metadata", {})
-        readings = entry.get("readings", [])
-        for reading in readings:
-            combined = {**metadata, **reading}
-            extracted_data.append(combined)
+    
+    for var in variables:
+        readings = all_readings.get(var, [])
+        if readings:
+            for entry in readings:
+                metadata = entry.get("metadata", {})
+                data_readings = entry.get("readings", [])
+                # Combine metadata with each reading for each variable
+                for reading in data_readings:
+                    combined = {**metadata, **reading, 'variable': var}
+                    extracted_data.append(combined)
     
     if extracted_data:
         return pd.DataFrame(extracted_data)  # Return the combined data as a DataFrame
@@ -99,11 +108,11 @@ def extract_air_temperature_data(all_readings):
         return pd.DataFrame()
 
 # Function to retrieve and parse "Air Temperature" readings into a DataFrame
-def get_air_temperature_dataframe(sn, start_date, end_date, token, **extra_kwargs_for_endpoint):
-    all_readings = get_readings_response_eff(sn, start_date, end_date, token, **extra_kwargs_for_endpoint)
+def get_data_dataframe(sn, start_date, end_date, token, variables, **extra_kwargs_for_endpoint):
+    all_readings = get_readings_response_eff(sn, start_date, end_date, token, variables, **extra_kwargs_for_endpoint)
     
     if all_readings:
-        return extract_air_temperature_data(all_readings)
+        return extract_data(all_readings, variables)
     return pd.DataFrame()
 
 # Fill in your token, device serial number, and date range
@@ -111,11 +120,14 @@ tok = "f9e6d698624c76340adde78b22a9c6ff514c6e42"
 sn = stnr
 server = "https://zentracloud.com"
 
+# List of variables to retrieve (e.g., 'Air Temperature', 'Precipitation')
+variables = ['Air Temperature', 'Precipitation']
+
 # Make API Call Button
 if st.button('Make API Call'):
     try:
         # Retrieve data as DataFrame
-        df = get_air_temperature_dataframe(sn, start_date, end_date, tok, server=server)
+        df = get_air_temperature_dataframe(sn, start_date, end_date, tok, variables, server=server)
 
         if not df.empty:
             st.success('API Call Successful!')
