@@ -92,6 +92,7 @@ if st.button('Make API Call'):
     try:
         # Retrieve data as DataFrame
         df_extract = get_readings_dataframe(sn, start_date, end_date, token=tok, server=server)
+        st.write(df_extract)
 
         # Check if DataFrame is not empty
         if not df_extract.empty:
