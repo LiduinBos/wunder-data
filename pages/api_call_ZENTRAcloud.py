@@ -12,7 +12,7 @@ st.title('ZENTRA Cloud API Caller')
 
 # Set start and end date with date picker
 today = datetime.date.today()
-history = today - datetime.timedelta(days=3)
+history = today - datetime.timedelta(days=2)
 start_date = st.date_input(
     'Start date', history, min_value=datetime.datetime(2023, 12, 1), max_value=today - datetime.timedelta(days=2)
 )
@@ -51,24 +51,39 @@ def get_readings_response_paginated(sn, start_date, end_date, token, **extra_kwa
     
     data = {**default_args, **extra_kwargs_for_endpoint, "device_sn": sn}
     
-    # Make the API request
-    response = get_with_credentials(token, url, params=data)
+    all_readings = []  # This will store all the readings across multiple pages
 
-    # Handle rate limit error (429) silently without logging the error message
-    if response.status_code == 429:
-        st.warning("Rate limit reached. Waiting 60 seconds before retrying...")
-        time.sleep(60)  # Wait for 60 seconds before retrying the request
-        return get_readings_response_paginated(sn, start_date, end_date, token, **extra_kwargs_for_endpoint)  # Retry
+    # Loop for pagination
+    while True:
+        # Make the API request
+        response = get_with_credentials(token, url, params=data)
 
-    if not response.ok:
-        st.error(f"API request failed: {response.status_code} - {response.text}")
-        return []
+        # Handle rate limit error (429) silently without logging the error message
+        if response.status_code == 429:
+            st.warning("Rate limit reached. Waiting 60 seconds before retrying...")
+            time.sleep(60)  # Wait for 60 seconds before retrying the request
+            continue  # Retry the request
 
-    # Parse the JSON response
-    json_data = response.json()
-    air_temp_readings = json_data.get("data", {}).get("Air Temperature", [])
+        if not response.ok:
+            st.error(f"API request failed: {response.status_code} - {response.text}")
+            break
 
-    return air_temp_readings
+        # Parse the JSON response
+        json_data = response.json()
+        air_temp_readings = json_data.get("data", {}).get("Air Temperature", [])
+
+        if not air_temp_readings:
+            # No more data to fetch
+            break
+        
+        # Append the current page's data to the list of all readings
+        all_readings.extend(air_temp_readings)
+
+        # Check if there's more data (next page)
+        page_num = data.get('page_num', 1)
+        data['page_num'] = page_num + 1
+
+    return all_readings
 
 # Function to extract and normalize "Air Temperature" data
 def extract_air_temperature_data(all_readings):
