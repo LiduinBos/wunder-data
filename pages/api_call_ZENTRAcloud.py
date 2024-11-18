@@ -87,7 +87,7 @@ def get_readings_dataframe(sn, start_date, end_date, **extra_kwargs_for_endpoint
             ## st.write(json_data)
             # Extract and normalize JSON data
             df = extract_data(json_data)
-            st.write(df)
+            ## st.write(df)
             return df
         except json.JSONDecodeError:
             st.error("Error decoding JSON response.")
@@ -105,7 +105,6 @@ if st.button('Make API Call'):
     try:
         # Retrieve data as DataFrame
         df_extract = get_readings_dataframe(sn, start_date, end_date, token=tok, server=server)
-        st.write(df_extract)
 
         # Check if DataFrame is not empty
         if not df_extract.empty:
