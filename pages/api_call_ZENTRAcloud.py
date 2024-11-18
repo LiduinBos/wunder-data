@@ -64,6 +64,7 @@ def extract_data(json_data):
             extracted_data.append(combined)
     
     # Convert to DataFrame
+    st.write(pd.DataFrame(extracted_data))
     return pd.DataFrame(extracted_data)
 
 # Function to parse API response and extract data
@@ -72,7 +73,7 @@ def get_readings_dataframe(sn, start_date, end_date, **extra_kwargs_for_endpoint
     if res.ok:
         try:
             json_data = res.json()  # Get full JSON response
-            
+            st.write(json_data)
             # Extract and normalize JSON data
             df = extract_data(json_data)
             st.write(df)
