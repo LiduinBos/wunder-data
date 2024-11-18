@@ -35,7 +35,7 @@ def get_with_credentials(tok, uri, **kwargs):
     headers = {"Authorization": token}
     return requests.get(uri, headers=headers, **kwargs)
 
-# Function to call the API and handle pagination with delay
+# Function to call the API and handle pagination with delay, without showing the rate limit message
 def get_readings_response_paginated(sn, start_date, end_date, token, **extra_kwargs_for_endpoint):
     server = extra_kwargs_for_endpoint.get("server", "https://zentracloud.com")
     url = f"{server}/api/v4/get_readings/"
@@ -60,13 +60,15 @@ def get_readings_response_paginated(sn, start_date, end_date, token, **extra_kwa
         # Make the API request
         response = get_with_credentials(token, url, params=data)
 
+        # Handle rate limit error (429) silently without logging the error message
+        if response.status_code == 429:
+            st.warning("Rate limit reached. Waiting 60 seconds before retrying...")
+            time.sleep(60)  # Wait for 60 seconds before retrying the request
+            continue  # Retry the same page after the delay
+
         # Break the loop if the response is not OK
         if not response.ok:
             st.error(f"API request failed on page {page_num}: {response.status_code} - {response.text}")
-            if response.status_code == 429:
-                st.warning("Rate limit reached. Waiting 60 seconds before retrying...")
-                time.sleep(60)  # Delay to handle rate limit
-                continue  # Retry the same page after the delay
             break
 
         # Parse the JSON response
@@ -125,24 +127,7 @@ if st.button('Make API Call'):
         if not df.empty:
             st.success('API Call Successful!')
             st.dataframe(df)  # Display DataFrame in Streamlit
-
-            ## plot with plotly
-            pio.renderers.default='browser'
-            pd.options.plotting.backend = "plotly"
-            fig = df.plot(x='datetime',y='value')
-            fig.update_layout(hovermode="x unified",xaxis_title=None,yaxis_title='Atmospheric temperature [*C]')
-            ## set date range maximum on end_date + 1
-            if end_date==today:
-                fig.update_xaxes(range = [start_date,today])
-            else:
-                fig.update_xaxes(range = [start_date,end_date + datetime.timedelta(days=1)])
-            
-            ## create simple dashboard
-            st.plotly_chart(fig)
-        
         else:
             st.warning('No data retrieved. Check date range or device serial number.')
     except Exception as e:
         st.error(f'An error occurred: {e}')
-
-
