@@ -121,9 +121,8 @@ if st.button('Make API Call'):
 ## plot with plotly
 pio.renderers.default='browser'
 pd.options.plotting.backend = "plotly"
-# pio.templates.default = "plotly"
-fig = df_all.plot(x='TIMESTAMP',y=['shf_Avg(1)','shf_Avg(2)','shf_Avg(3)','shf_Avg(4)'])
-fig.update_layout(hovermode="x unified",xaxis_title=None,yaxis_title='Soil heatflux [W/m^2]')
+fig = df_extract.plot(x='datetime',y=['Value'])
+fig.update_layout(hovermode="x unified",xaxis_title=None,yaxis_title='Atmospheric temperature [*C]')
 ## set date range maximum on end_date + 1
 if end_date==today:
     fig.update_xaxes(range = [start_date,today])
