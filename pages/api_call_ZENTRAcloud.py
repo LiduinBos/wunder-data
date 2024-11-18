@@ -35,7 +35,7 @@ def get_with_credentials(tok, uri, **kwargs):
     return requests.get(uri, headers=headers, **kwargs)
 
 # Function to call the API and handle pagination
-def get_readings_response_paginated(sn, start_date, end_date, **extra_kwargs_for_endpoint):
+def get_readings_response_paginated(sn, start_date, end_date, token, **extra_kwargs_for_endpoint):
     server = extra_kwargs_for_endpoint.get("server", "https://zentracloud.com")
     url = f"{server}/api/v4/get_readings/"
     
@@ -55,10 +55,9 @@ def get_readings_response_paginated(sn, start_date, end_date, **extra_kwargs_for
             'end_date': end_date
         }
         data = {**default_args, **extra_kwargs_for_endpoint, "device_sn": sn}
-        tok = extra_kwargs_for_endpoint.pop("token", "")
         
         # Make the API request
-        response = get_with_credentials(tok, url, params=data)
+        response = get_with_credentials(token, url, params=data)
 
         # Break the loop if the response is not OK
         if not response.ok:
@@ -103,8 +102,8 @@ def extract_air_temperature_data(all_readings):
         return pd.DataFrame()
 
 # Function to retrieve and parse "Air Temperature" readings into a DataFrame
-def get_air_temperature_dataframe(sn, start_date, end_date, **extra_kwargs_for_endpoint):
-    all_readings = get_readings_response_paginated(sn, start_date, end_date, **extra_kwargs_for_endpoint)
+def get_air_temperature_dataframe(sn, start_date, end_date, token, **extra_kwargs_for_endpoint):
+    all_readings = get_readings_response_paginated(sn, start_date, end_date, token, **extra_kwargs_for_endpoint)
     if all_readings:
         return extract_air_temperature_data(all_readings)
     return pd.DataFrame()
@@ -118,7 +117,7 @@ server = "https://zentracloud.com"
 if st.button('Make API Call'):
     try:
         # Retrieve data as DataFrame
-        df = get_air_temperature_dataframe(sn, start_date, end_date, token=tok, server=server)
+        df = get_air_temperature_dataframe(sn, start_date, end_date, tok, server=server)
 
         # Check if DataFrame is not empty
         if not df.empty:
@@ -128,7 +127,6 @@ if st.button('Make API Call'):
             st.warning('No data retrieved. Check date range or device serial number.')
     except Exception as e:
         st.error(f'An error occurred: {e}')
-
 
 ## plot with plotly
 pio.renderers.default='browser'
