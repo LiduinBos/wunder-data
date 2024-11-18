@@ -71,17 +71,17 @@ for date in daterange:
 st.write(df_all.columns)
 
 ## determine net radiation
-df_all['Rs_in_Avg'] = pd.to_numeric(df_all['Rs_in_Avg'])
-df_all['Rs_out_Avg'] = pd.to_numeric(df_all['Rs_out_Avg'])
-df_all['Rl_in_Avg'] = pd.to_numeric(df_all['Rl_in_Avg'])
-df_all['Rl_out_Avg'] = pd.to_numeric(df_all['Rl_out_Avg'])
-df_all['Rn'] =  (df_all['Rs_in_Avg']-df_all['Rs_out_Avg'])+(df_all['Rl_in_Avg']-df_all['Rl_out_Avg'])
+df_all['SWTop'] = pd.to_numeric(df_all['SWTop'])
+df_all['SWBottom'] = pd.to_numeric(df_all['SWBottom'])
+df_all['LWTop'] = pd.to_numeric(df_all['LWTop'])
+df_all['LWBottom'] = pd.to_numeric(df_all['LWBottom'])
+df_all['Rn'] =  (df_all['SWTop']-df_all['SWBottom'])+(df_all['LWTop']-df_all['LWBottom'])
 
 ## plot with plotly
 pio.renderers.default='browser'
 pd.options.plotting.backend = "plotly"
 # pio.templates.default = "plotly"
-fig = df_all.plot(x='TIMESTAMP',y=['Rs_in_Avg','Rs_out_Avg','Rl_in_Avg','Rl_out_Avg']) #,'Rn'])
+fig = df_all.plot(x='TIMESTAMP',y=['SWTop','SWBottom','LWTop','LWBottom']) #,'Rn'])
 fig.update_layout(hovermode="x unified",xaxis_title=None,yaxis_title='Radiation [W/m2]')
 ## set date range maximum on end_date + 1
 if end_date==today:
