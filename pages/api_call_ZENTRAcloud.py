@@ -4,6 +4,9 @@ import pandas as pd
 import json
 import datetime
 
+import plotly.io as pio
+import plotly.express as px
+
 # Streamlit app title
 st.title('ZENTRA Cloud API Caller')
 
@@ -114,3 +117,18 @@ if st.button('Make API Call'):
             st.warning('No data retrieved. Check date range or device serial number.')
     except Exception as e:
         st.error(f'An error occurred: {e}')
+
+## plot with plotly
+pio.renderers.default='browser'
+pd.options.plotting.backend = "plotly"
+# pio.templates.default = "plotly"
+fig = df_all.plot(x='TIMESTAMP',y=['shf_Avg(1)','shf_Avg(2)','shf_Avg(3)','shf_Avg(4)'])
+fig.update_layout(hovermode="x unified",xaxis_title=None,yaxis_title='Soil heatflux [W/m^2]')
+## set date range maximum on end_date + 1
+if end_date==today:
+    fig.update_xaxes(range = [start_date,today])
+else:
+    fig.update_xaxes(range = [start_date,end_date + datetime.timedelta(days=1)])
+
+## create simple dashboard
+st.plotly_chart(fig)
