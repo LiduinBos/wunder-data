@@ -57,7 +57,7 @@ def extract_data(json_data):
     for entry in json_data.get("Air Temperature", []):
         metadata = entry.get("metadata", {})
         readings = entry.get("readings", [])
-        
+        st.write(readings)
         # Combine metadata with each reading
         for reading in readings:
             combined = {**metadata, **reading}
@@ -72,7 +72,7 @@ def get_readings_dataframe(sn, start_date, end_date, **extra_kwargs_for_endpoint
     if res.ok:
         try:
             json_data = res.json()  # Get full JSON response
-            st.write(json_data)
+            ## st.write(json_data)
             # Extract and normalize JSON data
             df = extract_data(json_data)
             st.write(df)
