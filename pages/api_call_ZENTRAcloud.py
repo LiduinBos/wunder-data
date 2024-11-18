@@ -12,7 +12,7 @@ st.title('ZENTRA Cloud API Caller')
 
 # Set start and end date with date picker
 today = datetime.date.today()
-history = today - datetime.timedelta(days=4)
+history = today - datetime.timedelta(days=2)
 start_date = st.date_input(
     'Start date', history, min_value=datetime.datetime(2023, 12, 1), max_value=today - datetime.timedelta(days=2)
 )
@@ -34,36 +34,37 @@ def get_with_credentials(tok, uri, **kwargs):
     headers = {"Authorization": token}
     return requests.get(uri, headers=headers, **kwargs)
 
-# Function to call the API and handle pagination with delay, without showing the rate limit message
-def get_readings_response_paginated(sn, start_date, end_date, token, **extra_kwargs_for_endpoint):
+# Function to handle pagination and minimize requests
+def get_readings_response_eff(sn, start_date, end_date, token, **extra_kwargs_for_endpoint):
     server = extra_kwargs_for_endpoint.get("server", "https://zentracloud.com")
     url = f"{server}/api/v4/get_readings/"
     
-    # Prepare request parameters
+    # Request parameters for larger data chunks
     default_args = {
         'output_format': "json",
-        'per_page': 100,  # Number of records per page
-        'page_num': 1,    # Start at page 1
+        'per_page': 1000,  # Request up to 1000 records per page
+        'page_num': 1,
         'sort_by': 'asc',
         'start_date': start_date,
         'end_date': end_date
     }
     
     data = {**default_args, **extra_kwargs_for_endpoint, "device_sn": sn}
-    
-    all_readings = []  # This will store all the readings across multiple pages
+    all_readings = []  # To store all the data collected
 
-    # Loop for pagination
+    # Loop for pagination (we only expect 1 page now due to per_page=1000)
+    page_num = 1
     while True:
-        # Make the API request
+        data['page_num'] = page_num
         response = get_with_credentials(token, url, params=data)
 
-        # Handle rate limit error (429) silently without logging the error message
+        # Handle rate limit error (429)
         if response.status_code == 429:
             st.warning("Rate limit reached. Waiting 60 seconds before retrying...")
             time.sleep(60)  # Wait for 60 seconds before retrying the request
             continue  # Retry the request
 
+        # Check for non-OK responses
         if not response.ok:
             st.error(f"API request failed: {response.status_code} - {response.text}")
             break
@@ -75,25 +76,18 @@ def get_readings_response_paginated(sn, start_date, end_date, token, **extra_kwa
         if not air_temp_readings:
             # No more data to fetch
             break
-        
-        # Append the current page's data to the list of all readings
-        all_readings.extend(air_temp_readings)
 
-        # Check if there's more data (next page)
-        page_num = data.get('page_num', 1)
-        data['page_num'] = page_num + 1
+        all_readings.extend(air_temp_readings)  # Append current page data to all_readings
+        page_num += 1  # Increment page number for next request
 
     return all_readings
 
 # Function to extract and normalize "Air Temperature" data
 def extract_air_temperature_data(all_readings):
     extracted_data = []
-
     for entry in all_readings:
         metadata = entry.get("metadata", {})
         readings = entry.get("readings", [])
-        
-        # Combine metadata with each reading
         for reading in readings:
             combined = {**metadata, **reading}
             extracted_data.append(combined)
@@ -106,8 +100,7 @@ def extract_air_temperature_data(all_readings):
 
 # Function to retrieve and parse "Air Temperature" readings into a DataFrame
 def get_air_temperature_dataframe(sn, start_date, end_date, token, **extra_kwargs_for_endpoint):
-    # Request data for the full date range at once
-    all_readings = get_readings_response_paginated(sn, start_date, end_date, token, **extra_kwargs_for_endpoint)
+    all_readings = get_readings_response_eff(sn, start_date, end_date, token, **extra_kwargs_for_endpoint)
     
     if all_readings:
         return extract_air_temperature_data(all_readings)
