@@ -84,12 +84,12 @@ pio.renderers.default='browser'
 pd.options.plotting.backend = "plotly"
 # pio.templates.default = "plotly"
 fig = df_hourly_P_sum.plot(x=df_hourly_P_sum.index,y='Precipitation observed')
-fig.update_layout(hovermode="x unified",xaxis_title=None,yaxis_title='windflux [m/s]')
+# fig.update_layout(hovermode="x unified",xaxis_title=None,yaxis_title='windflux [m/s]')
 ## set date range maximum on end_date + 1
-if end_date==today:
-    fig.update_xaxes(range = [start_date,today])
-else:
-    fig.update_xaxes(range = [start_date,end_date + datetime.timedelta(days=1)])
+# if end_date==today:
+#     fig.update_xaxes(range = [start_date,today])
+# else:
+#     fig.update_xaxes(range = [start_date,end_date + datetime.timedelta(days=1)])
 
 ## create simple dashboard
 st.plotly_chart(fig)
