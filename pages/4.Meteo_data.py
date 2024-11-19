@@ -119,7 +119,7 @@ fig.data[0].update(
 # Add a box with statistics
 stats_text = (
     f"<b>Statistics over 7 days</b><br>"
-    f"Total sum of precipitation: {df_total_P_sum:.2f} mm<br>"
+    f"Total sum: {df_total_P_sum:.2f} mm<br>"
     f"Average: {df_total_P_avg:.2f} mm<br>"
     f"Max: {df_total_P_max:.2f} mm"
 )
