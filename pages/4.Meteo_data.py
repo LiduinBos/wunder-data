@@ -46,11 +46,19 @@ df = rawData.drop([0]).reset_index(drop=True)
 
 # print(df)
 
-def numeric_mean(df_in,var,re_int):
+def numeric_mean(df_in,var,re_int,method):
 
     df_in[var] = pd.to_numeric(df_in[var], errors='coerce')
-    df_out = df_in.resample(re_int)[var].mean()
-    
+
+    if method=='mean':
+        df_out = df_in.resample(re_int)[var].mean()
+    elif method=='sum':
+        df_out = df_in.resample(re_int)[var].sum()
+    elif method=='min':
+        df_out = df_in.resample(re_int)[var].min()
+    elif method=='max':
+        df_out = df_in.resample(re_int)[var].max()
+
     return df_out
 
 ## needed statistics
@@ -65,19 +73,22 @@ print(df.columns)
 ## aggregation hourly of selected parameters
 
 ## precipitation
-df_hourly_P_sum = df.resample('h')['Precipitation observed'].sum()
+# df_hourly_P_sum = df.resample('h')['Precipitation observed'].sum()
+df_hourly_P_sum = numeric_mean(df,'Precipitation observed','h','sum')
 
 ## windspeed
-df_daily_wind_min = df.resample('d')['Wind speed observation'].min()
-df_daily_wind_max = df.resample('d')['Wind speed observation'].max()
-df_daily_wind_avg = numeric_mean(df,'Wind speed observation','d')
-df_hourly_wind_avg = numeric_mean(df,'Wind speed observation','h')
+df_daily_wind_min = numeric_mean(df,'Wind speed observation','d','min')
+df_daily_wind_max =numeric_mean(df,'Wind speed observation','d','max')
+df_daily_wind_avg = numeric_mean(df,'Wind speed observation','d','mean')
+df_hourly_wind_avg = numeric_mean(df,'Wind speed observation','h','mean')
 
 ## air temperature
-df_daily_Tair_min = df.resample('d')['Air Temperature observation'].min()
-df_daily_Tair_max = df.resample('d')['Air Temperature observation'].max()
-df_daily_Tair_avg = numeric_mean(df,'Air Temperature observation','d')
-df_daily_Tair_avg = numeric_mean(df,'Air Temperature observation','h')
+df_daily_Tair_min = numeric_mean(df,'Air Temperature observation','d','min')
+df_daily_Tair_max = numeric_mean(df,'Air Temperature observation','d','max')
+df_daily_Tair_avg = numeric_mean(df,'Air Temperature observation','d','mean')
+df_daily_Tair_avg = numeric_mean(df,'Air Temperature observation','h','mean')
+
+print(df_hourly_P_sum)
 
 ## plot with plotly
 pio.renderers.default='browser'
