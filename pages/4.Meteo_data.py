@@ -116,8 +116,8 @@ fig.data[0].update(
 
 # Add a box with statistics
 stats_text = (
-    f"<b>Statistics</b><br>"
-    f"Total: {df_total_P_sum:.2f} mm<br>"
+    f"<b>Statistics over 7 days</b><br>"
+    f"Total sum of precipitation: {df_total_P_sum:.2f} mm<br>"
     f"Average: {df_total_P_avg:.2f} mm<br>"
     f"Max: {df_total_P_max:.2f} mm"
 )
@@ -125,7 +125,7 @@ stats_text = (
 fig.add_annotation(
     text=stats_text,
     xref="paper", yref="paper",  # Position in terms of the plot (0-1 range)
-    x=0.95, y=0.95,  # Top-right corner of the plot
+    x=1.05, y=0.95,  # Top-right corner of the plot
     showarrow=False,  # No arrow
     align="left",
     bgcolor="rgba(255, 255, 255, 0.8)",  # Background color with transparency
