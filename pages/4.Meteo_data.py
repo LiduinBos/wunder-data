@@ -106,6 +106,7 @@ fig = px.bar(
     labels={'x': 'Date', 'Precipitation observed': 'Precipitation [mm]'}
 )
 fig.update_layout(hovermode="x unified",
+                  title = 'Precipitation over the last 7 days',
                   xaxis_title='Date',
                   yaxis_title='Precipitation - hourly sum [mm]',
                   margin=dict(r=150), # Add extra margin to make space for the box)
@@ -127,7 +128,7 @@ stats_text = (
 fig.add_annotation(
     text=stats_text,
     xref="paper", yref="paper",  # Position in terms of the plot (0-1 range)
-    x=1.25, y=0.95,  # Top-right corner of the plot
+    x=1.2, y=0.95,  # Top-right corner of the plot
     showarrow=False,  # No arrow
     align="left",
     bgcolor="rgba(255, 255, 255, 0.8)",  # Background color with transparency
