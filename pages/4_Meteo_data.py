@@ -92,12 +92,19 @@ df_daily_Tair_min = numeric_mean(df,'Air Temperature observation','d','min')
 df_daily_Tair_max = numeric_mean(df,'Air Temperature observation','d','max')
 df_daily_Tair_avg = numeric_mean(df,'Air Temperature observation','d','mean')
 df_hourly_Tair_avg = numeric_mean(df,'Air Temperature observation','h','mean')
+df_total_Tair_avg = df_hourly_Tair_avg.mean()
+df_total_Tair_min = df_hourly_Tair_avg.min()
+df_total_Tair_max = df_hourly_Tair_avg.max()
+
 
 ## plot with plotly
 pio.renderers.default='browser'
 pd.options.plotting.backend = "plotly"
 
-# fig = df_hourly_P_sum.plot(x=df_hourly_P_sum.index,y='Precipitation observed')
+#------------------------------------
+# First Plot = precipitation
+#------------------------------------
+
 # Create the bar plot
 fig1 = px.bar(
     df_hourly_P_sum,
@@ -136,17 +143,45 @@ fig1.add_annotation(
     borderwidth=1
 )
 
-# ## create simple dashboard
-# st.plotly_chart(fig)
+#------------------------------------
+# Second Plot = temperature
+#------------------------------------
 
-# Second Plot (Plotly Line Plot)
 fig2 = px.line(
     df_hourly_Tair_avg,
     x=df_hourly_Tair_avg.index,
     y='Air Temperature observation',
-    labels={'x': 'Date', 'Air Temperature observation': 'Temperature [C]'},
+    labels={'x': 'Date', 'Air Temperature observation': 'Temperature [°C]'},
 )
 fig2.update_traces(marker=dict(size=8, symbol='circle'), line=dict(color='blue'))
+
+# Update hover template
+fig2.data[0].update(
+    hovertemplate='%{x}<br>Temperature: %{y:.2f} °C<extra></extra>'
+)
+
+# Add a box with statistics
+stats_text = (
+    f"<b>Statistics over 7 days</b><br>"
+    f"Average: {df_total_Tair_avg:.2f} °C<br>"
+    f"Min: {df_total_Tair_min:.2f} °C<br>"
+    f"Max: {df_total_Tair_max:.2f} °C"
+)
+
+fig2.add_annotation(
+    text=stats_text,
+    xref="paper", yref="paper",  # Position in terms of the plot (0-1 range)
+    x=1.2, y=0.95,  # Top-right corner of the plot
+    showarrow=False,  # No arrow
+    align="left",
+    bgcolor="rgba(255, 255, 255, 0.8)",  # Background color with transparency
+    bordercolor="black",
+    borderwidth=1
+)
+
+#------------------------------------
+## page layout update
+#------------------------------------
 
 # Streamlit Layout
 st.title("Weather data Herenboeren Wenumseveld for the past 7 days")
