@@ -156,6 +156,8 @@ fig2 = px.line(
 fig2.update_traces(marker=dict(size=8, symbol='circle'), line=dict(color='blue'))
 
 fig2.update_layout(hovermode="x unified",
+                  xaxis_title='Date',
+                  yaxis_title='Temperature [°C]',
                   margin=dict(r=150), # Add extra margin to make space for the box)
 )
 
