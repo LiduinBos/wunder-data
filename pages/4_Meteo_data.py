@@ -125,7 +125,7 @@ fig1.data[0].update(
 )
 
 # Add a box with statistics
-stats_text = (
+stats_text_P = (
     f"<b>Statistics over 7 days</b><br>"
     f"Total sum: {df_total_P_sum:.2f} mm<br>"
     f"Average: {df_total_P_avg:.2f} mm<br>"
@@ -133,7 +133,7 @@ stats_text = (
 )
 
 fig1.add_annotation(
-    text=stats_text,
+    text=stats_text_P,
     xref="paper", yref="paper",  # Position in terms of the plot (0-1 range)
     x=1.2, y=0.95,  # Top-right corner of the plot
     showarrow=False,  # No arrow
@@ -161,7 +161,7 @@ fig2.data[0].update(
 )
 
 # Add a box with statistics
-stats_text = (
+stats_text_temp = (
     f"<b>Statistics over 7 days</b><br>"
     f"Average: {df_total_Tair_avg:.2f} °C<br>"
     f"Min: {df_total_Tair_min:.2f} °C<br>"
@@ -169,7 +169,7 @@ stats_text = (
 )
 
 fig2.add_annotation(
-    text=stats_text,
+    text=stats_text_temp,
     xref="paper", yref="paper",  # Position in terms of the plot (0-1 range)
     x=1.2, y=0.95,  # Top-right corner of the plot
     showarrow=False,  # No arrow
