@@ -94,7 +94,14 @@ print(df_hourly_P_sum)
 pio.renderers.default='browser'
 pd.options.plotting.backend = "plotly"
 # pio.templates.default = "plotly"
-fig = df_hourly_P_sum.plot(x=df_hourly_P_sum.index,y='Precipitation observed')
+# fig = df_hourly_P_sum.plot(x=df_hourly_P_sum.index,y='Precipitation observed')
+# Create the bar plot
+fig = px.bar(
+    df_hourly_P_sum,
+    x=df_hourly_P_sum.index,
+    y='Precipitation observed',
+    labels={'x': 'Date', 'Precipitation observed': 'Precipitation [mm]'}
+)
 fig.update_layout(hovermode="x unified",xaxis_title='Date',yaxis_title='Precipitation - hourly sum [mm]')
 
 # Update hover template
