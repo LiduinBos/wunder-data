@@ -96,7 +96,7 @@ df_daily_Tair_avg = numeric_mean(df,'Air Temperature observation','h','mean')
 ## plot with plotly
 pio.renderers.default='browser'
 pd.options.plotting.backend = "plotly"
-# pio.templates.default = "plotly"
+
 # fig = df_hourly_P_sum.plot(x=df_hourly_P_sum.index,y='Precipitation observed')
 # Create the bar plot
 fig = px.bar(
@@ -106,7 +106,7 @@ fig = px.bar(
     labels={'x': 'Date', 'Precipitation observed': 'Precipitation [mm]'}
 )
 fig.update_layout(hovermode="x unified",
-                  title = 'Precipitation over the last 7 days',
+                  title = 'Precipitation during the last 7 days',
                   xaxis_title='Date',
                   yaxis_title='Precipitation - hourly sum [mm]',
                   margin=dict(r=150), # Add extra margin to make space for the box)
@@ -138,3 +138,4 @@ fig.add_annotation(
 
 ## create simple dashboard
 st.plotly_chart(fig)
+
