@@ -99,21 +99,21 @@ pd.options.plotting.backend = "plotly"
 
 # fig = df_hourly_P_sum.plot(x=df_hourly_P_sum.index,y='Precipitation observed')
 # Create the bar plot
-fig = px.bar(
+fig1 = px.bar(
     df_hourly_P_sum,
     x=df_hourly_P_sum.index,
     y='Precipitation observed',
     labels={'x': 'Date', 'Precipitation observed': 'Precipitation [mm]'}
 )
-fig.update_layout(hovermode="x unified",
-                  title = 'Precipitation during the last 7 days',
+fig1.update_layout(hovermode="x unified",
+                #   title = 'Precipitation during the last 7 days',
                   xaxis_title='Date',
                   yaxis_title='Precipitation - hourly sum [mm]',
                   margin=dict(r=150), # Add extra margin to make space for the box)
 )  
 
 # Update hover template
-fig.data[0].update(
+fig1.data[0].update(
     hovertemplate='%{x}<br>Precipitation: %{y:.2f} mm<extra></extra>'
 )
 
@@ -125,7 +125,7 @@ stats_text = (
     f"Max: {df_total_P_max:.2f} mm"
 )
 
-fig.add_annotation(
+fig1.add_annotation(
     text=stats_text,
     xref="paper", yref="paper",  # Position in terms of the plot (0-1 range)
     x=1.2, y=0.95,  # Top-right corner of the plot
@@ -136,6 +136,26 @@ fig.add_annotation(
     borderwidth=1
 )
 
-## create simple dashboard
-st.plotly_chart(fig)
+# ## create simple dashboard
+# st.plotly_chart(fig)
 
+# Second Plot (Plotly Line Plot)
+fig2 = px.line(
+    df,
+    x=df.index,
+    y='Precipitation observed',
+    labels={'x': 'Date', 'Precipitation observed': 'Precipitation [mm]'},
+    title="Precipitation Line Plot"
+)
+fig2.update_traces(marker=dict(size=8, symbol='circle'), line=dict(color='blue'))
+
+# Streamlit Layout
+st.title("Weather data Herenboeren Wenumseveld")
+
+# First Plot Section
+st.subheader("Precipitation during the last 7 days")
+st.plotly_chart(fig1)
+
+# Second Plot Section
+st.subheader("Plotly Line Plot")
+st.plotly_chart(fig2)
