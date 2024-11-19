@@ -21,43 +21,69 @@ import pandas as pd
 import io
 
 import datetime
+import numpy as np
 
 # set start and end date
-# make it variables that can be chosen in the app as a given range
 today = datetime.date.today()
 history = today - datetime.timedelta(days=7)
-start_date = st.date_input('Start date', history,min_value=datetime.datetime(2023, 12, 1),max_value=today - datetime.timedelta(days=2))
+start_date = history
+end_date = today - datetime.timedelta(days=1)
 
 ## visualize start and end data --> cannot not be editted by the user
-st.write('start date: '+str(start_date))
-st.write('end date: '+str(end_date))
+# st.write('start date: '+str(start_date))
+# st.write('end date: '+str(end_date))
 
-# Download data files
+# Download data file (gathered by API call performed by UTwente and stored in csv)
 # by making use of the requests python package
 # and for the selected date range
-i=0
-for date in daterange:
-    url = "http://majisysdemo.itc.utwente.nl/wunder/get7days.py?location=z6-08820"
-    ## download url
-    urlData = requests.get(url).content
-    ## transform requests format to pandas
-    rawData = pd.read_csv(io.StringIO(urlData.decode('utf-8')))
-    ## remove header lines (1 and 2, keep 0 since this includes the abbreviation of the parameters)
-    df = rawData.drop([1,2]).reset_index(drop=True)
-    df.columns = df.iloc[0] ##--> header is not fully set yet, is now in row 0
-    df2 = df.drop([0]).reset_index(drop=True)
-    ## concatenate all data to 1 dateframe
-    if i==0:
-        df_all = df2
-    else:
-        df_all = pd.concat([df_all,df2])
-    i+=1
+url = "http://majisysdemo.itc.utwente.nl/wunder/get7days.py?location=z6-08820"
+## download url
+urlData = requests.get(url).content
+## transform requests format to pandas
+rawData = pd.read_csv(io.StringIO(urlData.decode('utf-8')))
+## remove header lines (1 and 2, keep 0 since this includes the abbreviation of the parameters)
+df = rawData.drop([0]).reset_index(drop=True)
+
+# print(df)
+
+def numeric_mean(df_in,var,re_int):
+
+    df_in[var] = pd.to_numeric(df_in[var], errors='coerce')
+    df_out = df_in.resample(re_int)[var].mean()
+    
+    return df_out
+
+## needed statistics
+
+df['datetime'] = pd.to_datetime(df['Date'])
+
+# Set the datetime column as the index
+df.set_index('datetime', inplace=True)
+
+print(df.columns)
+
+## aggregation hourly of selected parameters
+
+## precipitation
+df_hourly_P_sum = df.resample('h')['Precipitation observed'].sum()
+
+## windspeed
+df_daily_wind_min = df.resample('d')['Wind speed observation'].min()
+df_daily_wind_max = df.resample('d')['Wind speed observation'].max()
+df_daily_wind_avg = numeric_mean(df,'Wind speed observation','d')
+df_hourly_wind_avg = numeric_mean(df,'Wind speed observation','h')
+
+## air temperature
+df_daily_Tair_min = df.resample('d')['Air Temperature observation'].min()
+df_daily_Tair_max = df.resample('d')['Air Temperature observation'].max()
+df_daily_Tair_avg = numeric_mean(df,'Air Temperature observation','d')
+df_daily_Tair_avg = numeric_mean(df,'Air Temperature observation','h')
 
 ## plot with plotly
 pio.renderers.default='browser'
 pd.options.plotting.backend = "plotly"
 # pio.templates.default = "plotly"
-fig = df_all.plot(x='TIMESTAMP',y=['Ux','Uy','Uz'])
+fig = df_hourly_P_sum.plot(x=df_hourly_P_sum.index,y='Precipitation observed')
 fig.update_layout(hovermode="x unified",xaxis_title=None,yaxis_title='windflux [m/s]')
 ## set date range maximum on end_date + 1
 if end_date==today:
