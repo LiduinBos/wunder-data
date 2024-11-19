@@ -86,6 +86,9 @@ df_daily_wind_min = numeric_mean(df,'Wind speed observation','d','min')
 df_daily_wind_max =numeric_mean(df,'Wind speed observation','d','max')
 df_daily_wind_avg = numeric_mean(df,'Wind speed observation','d','mean')
 df_hourly_wind_avg = numeric_mean(df,'Wind speed observation','h','mean')
+df_total_wind_avg = df_hourly_wind_avg.mean()
+df_total_wind_min = df_hourly_wind_avg.min()
+df_total_wind_max = df_hourly_wind_avg.max()
 
 ## air temperature
 df_daily_Tair_min = numeric_mean(df,'Air Temperature observation','d','min')
@@ -186,6 +189,48 @@ fig2.add_annotation(
 )
 
 #------------------------------------
+# Third Plot = windspeed
+#------------------------------------
+
+fig3 = px.line(
+    df_hourly_wind_avg,
+    x=df_hourly_wind_avg.index,
+    y='Wind speed observation',
+    labels={'x': 'Date', 'Wind speed observation': 'Wind speed [m/s]'},
+)
+fig3.update_traces(marker=dict(size=8, symbol='circle'), line=dict(color='blue'))
+
+fig3.update_layout(hovermode="x unified",
+                  xaxis_title='Date',
+                  yaxis_title='Wind speed [m/s]',
+                  margin=dict(r=150), # Add extra margin to make space for the box)
+)
+
+# Update hover template
+fig3.data[0].update(
+    hovertemplate='%{x}<br>Wind speed: %{y:.2f} m/s<extra></extra>'
+)
+
+# Add a box with statistics
+stats_text_temp = (
+    f"<b>Statistics over 7 days</b><br>"
+    f"Average: {df_total_wind_avg:.2f} m/s<br>"
+    f"Min: {df_total_wind_min:.2f} m/s<br>"
+    f"Max: {df_total_wind_max:.2f} m/s"
+)
+
+fig3.add_annotation(
+    text=stats_text_temp,
+    xref="paper", yref="paper",  # Position in terms of the plot (0-1 range)
+    x=1.2, y=0.95,  # Top-right corner of the plot
+    showarrow=False,  # No arrow
+    align="left",
+    bgcolor="rgba(255, 255, 255, 0.8)",  # Background color with transparency
+    bordercolor="black",
+    borderwidth=1
+)
+
+#------------------------------------
 ## page layout update
 #------------------------------------
 
@@ -199,3 +244,8 @@ st.plotly_chart(fig1)
 # Second Plot Section
 st.subheader("Temperature")
 st.plotly_chart(fig2)
+
+# Third Plot Section
+st.subheader("Windspeed")
+st.plotly_chart(fig3)
+
