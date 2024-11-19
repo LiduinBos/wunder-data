@@ -91,7 +91,7 @@ df_hourly_wind_avg = numeric_mean(df,'Wind speed observation','h','mean')
 df_daily_Tair_min = numeric_mean(df,'Air Temperature observation','d','min')
 df_daily_Tair_max = numeric_mean(df,'Air Temperature observation','d','max')
 df_daily_Tair_avg = numeric_mean(df,'Air Temperature observation','d','mean')
-df_daily_Tair_avg = numeric_mean(df,'Air Temperature observation','h','mean')
+df_hourly_Tair_avg = numeric_mean(df,'Air Temperature observation','h','mean')
 
 ## plot with plotly
 pio.renderers.default='browser'
@@ -141,21 +141,20 @@ fig1.add_annotation(
 
 # Second Plot (Plotly Line Plot)
 fig2 = px.line(
-    df,
-    x=df.index,
-    y='Precipitation observed',
-    labels={'x': 'Date', 'Precipitation observed': 'Precipitation [mm]'},
-    title="Precipitation Line Plot"
+    df_hourly_Tair_avg,
+    x=df_hourly_Tair_avg.index,
+    y='Air Temperature observation',
+    labels={'x': 'Date', 'Air Temperature observation': 'Temperature [C]'},
 )
 fig2.update_traces(marker=dict(size=8, symbol='circle'), line=dict(color='blue'))
 
 # Streamlit Layout
-st.title("Weather data Herenboeren Wenumseveld")
+st.title("Weather data Herenboeren Wenumseveld for the past 7 days")
 
 # First Plot Section
-st.subheader("Precipitation during the last 7 days")
+st.subheader("Precipitation")
 st.plotly_chart(fig1)
 
 # Second Plot Section
-st.subheader("Plotly Line Plot")
+st.subheader("Temperature")
 st.plotly_chart(fig2)
