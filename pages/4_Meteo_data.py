@@ -155,6 +155,10 @@ fig2 = px.line(
 )
 fig2.update_traces(marker=dict(size=8, symbol='circle'), line=dict(color='blue'))
 
+fig2.update_layout(hovermode="x unified",
+                  margin=dict(r=150), # Add extra margin to make space for the box)
+)
+
 # Update hover template
 fig2.data[0].update(
     hovertemplate='%{x}<br>Temperature: %{y:.2f} °C<extra></extra>'
