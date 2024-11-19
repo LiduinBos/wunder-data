@@ -95,7 +95,12 @@ pio.renderers.default='browser'
 pd.options.plotting.backend = "plotly"
 # pio.templates.default = "plotly"
 fig = df_hourly_P_sum.plot(x=df_hourly_P_sum.index,y='Precipitation observed')
-fig.update_layout(hovermode="x unified",xaxis_title='date',yaxis_title='precipitation [mm]')
+fig.update_layout(hovermode="x unified",xaxis_title='Date',yaxis_title='Precipitation - hourly sum [mm]')
+
+# Update hover template
+fig.data[0].update(
+    hovertemplate='%{x}<br>Precipitation: %{y:.2f} mm<extra></extra>'
+)
 
 ## create simple dashboard
 st.plotly_chart(fig)
