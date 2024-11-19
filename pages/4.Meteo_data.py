@@ -93,8 +93,6 @@ df_daily_Tair_max = numeric_mean(df,'Air Temperature observation','d','max')
 df_daily_Tair_avg = numeric_mean(df,'Air Temperature observation','d','mean')
 df_daily_Tair_avg = numeric_mean(df,'Air Temperature observation','h','mean')
 
-# print(df_hourly_P_sum)
-
 ## plot with plotly
 pio.renderers.default='browser'
 pd.options.plotting.backend = "plotly"
@@ -107,7 +105,11 @@ fig = px.bar(
     y='Precipitation observed',
     labels={'x': 'Date', 'Precipitation observed': 'Precipitation [mm]'}
 )
-fig.update_layout(hovermode="x unified",xaxis_title='Date',yaxis_title='Precipitation - hourly sum [mm]')
+fig.update_layout(hovermode="x unified",
+                  xaxis_title='Date',
+                  yaxis_title='Precipitation - hourly sum [mm]',
+                  margin=dict(r=150), # Add extra margin to make space for the box)
+)  
 
 # Update hover template
 fig.data[0].update(
