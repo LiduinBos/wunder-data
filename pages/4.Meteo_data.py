@@ -127,7 +127,7 @@ stats_text = (
 fig.add_annotation(
     text=stats_text,
     xref="paper", yref="paper",  # Position in terms of the plot (0-1 range)
-    x=1.05, y=0.95,  # Top-right corner of the plot
+    x=1.25, y=0.95,  # Top-right corner of the plot
     showarrow=False,  # No arrow
     align="left",
     bgcolor="rgba(255, 255, 255, 0.8)",  # Background color with transparency
