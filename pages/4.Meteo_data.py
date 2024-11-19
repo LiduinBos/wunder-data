@@ -75,6 +75,11 @@ print(df.columns)
 ## precipitation
 # df_hourly_P_sum = df.resample('h')['Precipitation observed'].sum()
 df_hourly_P_sum = numeric_mean(df,'Precipitation observed','h','sum')
+df_total_P_sum = df_hourly_P_sum.sum()
+df_total_P_avg = df_hourly_P_sum.mean()
+df_total_P_max = df_hourly_P_sum.max()
+
+print(df_total_P_sum,df_total_P_avg,df_total_P_max)
 
 ## windspeed
 df_daily_wind_min = numeric_mean(df,'Wind speed observation','d','min')
@@ -88,7 +93,7 @@ df_daily_Tair_max = numeric_mean(df,'Air Temperature observation','d','max')
 df_daily_Tair_avg = numeric_mean(df,'Air Temperature observation','d','mean')
 df_daily_Tair_avg = numeric_mean(df,'Air Temperature observation','h','mean')
 
-print(df_hourly_P_sum)
+# print(df_hourly_P_sum)
 
 ## plot with plotly
 pio.renderers.default='browser'
@@ -107,6 +112,25 @@ fig.update_layout(hovermode="x unified",xaxis_title='Date',yaxis_title='Precipit
 # Update hover template
 fig.data[0].update(
     hovertemplate='%{x}<br>Precipitation: %{y:.2f} mm<extra></extra>'
+)
+
+# Add a box with statistics
+stats_text = (
+    f"<b>Statistics</b><br>"
+    f"Total: {df_total_P_sum:.2f} mm<br>"
+    f"Average: {df_total_P_avg:.2f} mm<br>"
+    f"Max: {df_total_P_max:.2f} mm"
+)
+
+fig.add_annotation(
+    text=stats_text,
+    xref="paper", yref="paper",  # Position in terms of the plot (0-1 range)
+    x=0.95, y=0.95,  # Top-right corner of the plot
+    showarrow=False,  # No arrow
+    align="left",
+    bgcolor="rgba(255, 255, 255, 0.8)",  # Background color with transparency
+    bordercolor="black",
+    borderwidth=1
 )
 
 ## create simple dashboard
