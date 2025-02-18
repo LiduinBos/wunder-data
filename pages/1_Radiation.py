@@ -68,6 +68,7 @@ for date in daterange:
         df_all = pd.concat([df_all,df2])
     i+=1
 
+print(df_all.columns)
 ## determine net radiation
 df_all['SWTop'] = pd.to_numeric(df_all['SWTop_avg'])
 df_all['SWBottom'] = pd.to_numeric(df_all['SWBottom_avg'])
