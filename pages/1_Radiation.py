@@ -51,7 +51,7 @@ password = 'WunDer@2024;'
 # and for the selected date range
 i=0
 for date in daterange:
-    url = "http://liduin:WunDer@2024;@majisysdemo.itc.utwente.nl/wunder/logger_files/Wenumseveld_EC/CR3000_Wenumseveld_"+pars+"_ts"+date+".dat"
+    url = "http://liduin:WunDer@2024;@majisysdemo.itc.utwente.nl/wunder/logger_files/Wenumseveld_EC/CR3000_Wenumseveld_"+pars+date+".dat"
     ## download url
     urlData = requests.get(url, auth=(username, password)).content
     ## transform requests format to pandas
