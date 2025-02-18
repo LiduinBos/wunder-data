@@ -76,28 +76,35 @@ df_all['LWTop_cor'] = pd.to_numeric(df_all['LWTopC_Avg'])
 df_all['LWBottom_cor'] = pd.to_numeric(df_all['LWBottomC_Avg'])
 df_all['Rn'] =  (df_all['SWTop']-df_all['SWBottom'])+(df_all['LWTop_cor']-df_all['LWBottom_cor'])
 
-# rename columns
-# df_all.rename(columns={"SWTop":"Incoming short wave radiation","SWBottom":"Outcoming short wave radiation","LWTop_cor":"Corrected incoming long wave radiation","LWBottom_cor":"Corrected outcoming long wave radiation"})
+# Define custom labels
+custom_labels = {
+    "SWTop": "Incoming short wave radiation",
+    "SWBottom": "Outgoing short wave radiation",
+    "LWTop_cor": "Corrected incoming long wave radiation",
+    "LWBottom_cor": "Corrected outgoing long wave radiation",
+    "TIMESTAMP": "Time",
+}
+
+# Rename DataFrame columns (Ensures legend updates)
+df_plot = df_all.rename(columns=custom_labels)
+
+# Convert to long format for Plotly Express
+df_long = df_plot.melt(id_vars=["Time"], var_name="Type", value_name="Value")
 
 ## plot with plotly
 pio.renderers.default='browser'
 pd.options.plotting.backend = "plotly"
 # pio.templates.default = "plotly"
 fig = px.line(
-    df_all,
-    x='TIMESTAMP',
-    y=['SWTop', 'SWBottom', 'LWTop_cor', 'LWBottom_cor'],
-    labels={
-        "SWTop": "Incoming short wave radiation",
-        "SWBottom": "Outgoing short wave radiation",
-        "LWTop_cor": "Corrected incoming long wave radiation",
-        "LWBottom_cor": "Corrected outgoing long wave radiation",
-        "TIMESTAMP": "Time"
-    }
+    df_long,
+    x='Time',
+    y="Value",
+    labels={"Type": "Radiation Type", "Value": "Radiation (W/m²)"},
+    hover_name="Type"
 )
 
 # fig = df_all.plot(x='TIMESTAMP',y=['SWTop','SWBottom','LWTop_cor','LWBottom_cor'], labels={"SWTop":"Incoming short wave radiation","SWBottom":"Outcoming short wave radiation","LWTop_cor":"Corrected incoming long wave radiation","LWBottom_cor":"Corrected outcoming long wave radiation"}) #,'Rn'])
-fig.update_layout(hovermode="x unified",xaxis_title=None,yaxis_title='Radiation [W/m2]')
+# fig.update_layout(hovermode="x unified",xaxis_title=None,yaxis_title='Radiation [W/m2]')
 ## set date range maximum on end_date + 1
 if end_date==today:
     fig.update_xaxes(range = [start_date,today])
