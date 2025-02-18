@@ -71,10 +71,10 @@ for date in daterange:
 
 st.write(df_all.columns)
 ## determine net radiation
-df_all['SWTop'] = pd.to_numeric(df_all['SWTop_avg'])
-df_all['SWBottom'] = pd.to_numeric(df_all['SWBottom_avg'])
-df_all['LWTop_cor'] = pd.to_numeric(df_all['LWTop_avg_cor'])
-df_all['LWBottom_cor'] = pd.to_numeric(df_all['LWBottom_avg_cor'])
+df_all['SWTop'] = pd.to_numeric(df_all['SWTop_Avg'])
+df_all['SWBottom'] = pd.to_numeric(df_all['SWBottom_Avg'])
+df_all['LWTop_cor'] = pd.to_numeric(df_all['LWTopC_Avg'])
+df_all['LWBottom_cor'] = pd.to_numeric(df_all['LWBottomC_Avg'])
 df_all['Rn'] =  (df_all['SWTop']-df_all['SWBottom'])+(df_all['LWTop_cor']-df_all['LWBottom_cor'])
 
 ## plot with plotly
