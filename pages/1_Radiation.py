@@ -102,7 +102,7 @@ fig.update_layout(hovermode="x unified",xaxis_title=None,yaxis_title='Radiation 
 if end_date==today:
     fig.update_xaxes(range = [start_date,today])
 else:
-    fig.update_xaxes(range = [start_date,end_date + datetime.timedelta(days=1)])-
+    fig.update_xaxes(range = [start_date,end_date + datetime.timedelta(days=1)])
 
 ## create simple dashboard
 st.plotly_chart(fig)
