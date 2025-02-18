@@ -40,7 +40,7 @@ else:
 daterange = [d.strftime('%Y%m%d') for d in pd.date_range(start_date,end_date + datetime.timedelta(days=1))]
 
 ## select parameter set
-pars = "cnr4"
+pars = "cnr4data"
 
 ## account credentials of ftp server from where data will be downloaded
 username = 'liduin'
@@ -69,10 +69,10 @@ for date in daterange:
     i+=1
 
 ## determine net radiation
-df_all['SWTop'] = pd.to_numeric(df_all['SWTop'])
-df_all['SWBottom'] = pd.to_numeric(df_all['SWBottom'])
-df_all['LWTop'] = pd.to_numeric(df_all['LWTop'])
-df_all['LWBottom'] = pd.to_numeric(df_all['LWBottom'])
+df_all['SWTop'] = pd.to_numeric(df_all['SWTop_avg'])
+df_all['SWBottom'] = pd.to_numeric(df_all['SWBottom_avg'])
+df_all['LWTop'] = pd.to_numeric(df_all['LWTop_avg_cor'])
+df_all['LWBottom'] = pd.to_numeric(df_all['LWBottom_avg_cor'])
 df_all['Rn'] =  (df_all['SWTop']-df_all['SWBottom'])+(df_all['LWTop']-df_all['LWBottom'])
 
 ## plot with plotly
