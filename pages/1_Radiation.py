@@ -99,7 +99,7 @@ fig = px.line(
 )
 
 # fig = df_all.plot(x='TIMESTAMP',y=['SWTop','SWBottom','LWTop_cor','LWBottom_cor'], labels={"SWTop":"Incoming short wave radiation","SWBottom":"Outcoming short wave radiation","LWTop_cor":"Corrected incoming long wave radiation","LWBottom_cor":"Corrected outcoming long wave radiation"}) #,'Rn'])
-fig.update_layout(hovermode="x unified",xaxis_title=None,yaxis_title='Radiation [W/m2]')
+fig.update_layout(hovermode="x unified",xaxis_title=None,yaxis_title='Radiation [W/m²]')
 ## set date range maximum on end_date + 1
 if end_date==today:
     fig.update_xaxes(range = [start_date,today])
