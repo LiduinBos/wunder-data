@@ -56,12 +56,13 @@ for date in daterange:
     urlData = requests.get(url, auth=(username, password)).content
     ## transform requests format to pandas
     # https://stackoverflow.com/questions/39213597/convert-text-data-from-requests-object-to-dataframe-with-pandas
-    rawData = pd.read_csv(io.StringIO(urlData.decode('utf-8')))
+    rawData = pd.read_csv(io.StringIO(urlData.decode('utf-8')),skiprows=[1,2])
     st.write(rawData)
-    ## remove header lines (1 and 2, keep 0 since this includes the abbreviation of the parameters)
-    df = rawData.drop([1,2]).reset_index(drop=True)
-    df.columns = df.iloc[0] ##--> header is not fully set yet, is now in row 0
-    df2 = df.drop([0]).reset_index(drop=True)
+    # ## remove header lines (1 and 2, keep 0 since this includes the abbreviation of the parameters)
+    # df = rawData.drop([1,2]).reset_index(drop=True)
+    # df.columns = df.iloc[0] ##--> header is not fully set yet, is now in row 0
+    # df2 = df.drop([0]).reset_index(drop=True)
+    df2 = rawData
     ## concatenate all data to 1 dateframe
     if i==0:
         df_all = df2
