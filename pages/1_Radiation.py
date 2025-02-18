@@ -83,13 +83,26 @@ df_all['Rn'] =  (df_all['SWTop']-df_all['SWBottom'])+(df_all['LWTop_cor']-df_all
 pio.renderers.default='browser'
 pd.options.plotting.backend = "plotly"
 # pio.templates.default = "plotly"
-fig = df_all.plot(x='TIMESTAMP',y=['SWTop','SWBottom','LWTop_cor','LWBottom_cor'], labels={"SWTop":"Incoming short wave radiation","SWBottom":"Outcoming short wave radiation","LWTop_cor":"Corrected incoming long wave radiation","LWBottom_cor":"Corrected outcoming long wave radiation"}) #,'Rn'])
+fig = px.line(
+    df_all,
+    x='TIMESTAMP',
+    y=['SWTop', 'SWBottom', 'LWTop_cor', 'LWBottom_cor'],
+    labels={
+        "SWTop": "Incoming short wave radiation",
+        "SWBottom": "Outgoing short wave radiation",
+        "LWTop_cor": "Corrected incoming long wave radiation",
+        "LWBottom_cor": "Corrected outgoing long wave radiation",
+        "TIMESTAMP": "Time"
+    }
+)
+
+# fig = df_all.plot(x='TIMESTAMP',y=['SWTop','SWBottom','LWTop_cor','LWBottom_cor'], labels={"SWTop":"Incoming short wave radiation","SWBottom":"Outcoming short wave radiation","LWTop_cor":"Corrected incoming long wave radiation","LWBottom_cor":"Corrected outcoming long wave radiation"}) #,'Rn'])
 fig.update_layout(hovermode="x unified",xaxis_title=None,yaxis_title='Radiation [W/m2]')
 ## set date range maximum on end_date + 1
 if end_date==today:
     fig.update_xaxes(range = [start_date,today])
 else:
-    fig.update_xaxes(range = [start_date,end_date + datetime.timedelta(days=1)])
+    fig.update_xaxes(range = [start_date,end_date + datetime.timedelta(days=1)])-
 
 ## create simple dashboard
 st.plotly_chart(fig)
