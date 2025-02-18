@@ -85,26 +85,21 @@ custom_labels = {
     "TIMESTAMP": "Time",
 }
 
-# Rename DataFrame columns (Ensures legend updates)
 df_plot = df_all.rename(columns=custom_labels)
-
-# Convert to long format for Plotly Express
-df_long = df_plot.melt(id_vars=["Time"], var_name="Type", value_name="Value")
 
 ## plot with plotly
 pio.renderers.default='browser'
 pd.options.plotting.backend = "plotly"
 # pio.templates.default = "plotly"
 fig = px.line(
-    df_long,
+    df_plot,
     x='Time',
-    y="Value",
-    labels={"Type": "Radiation Type", "Value": "Radiation (W/m²)"},
-    hover_name="Type"
+    y=["Incoming short wave radiation","Outgoing short wave radiation","Corrected incoming long wave radiation","Corrected outgoing long wave radiation"] ,#['SWTop', 'SWBottom', 'LWTop_cor', 'LWBottom_cor'],
+    labels=custom_labels
 )
 
 # fig = df_all.plot(x='TIMESTAMP',y=['SWTop','SWBottom','LWTop_cor','LWBottom_cor'], labels={"SWTop":"Incoming short wave radiation","SWBottom":"Outcoming short wave radiation","LWTop_cor":"Corrected incoming long wave radiation","LWBottom_cor":"Corrected outcoming long wave radiation"}) #,'Rn'])
-# fig.update_layout(hovermode="x unified",xaxis_title=None,yaxis_title='Radiation [W/m2]')
+fig.update_layout(hovermode="x unified",xaxis_title=None,yaxis_title='Radiation [W/m2]')
 ## set date range maximum on end_date + 1
 if end_date==today:
     fig.update_xaxes(range = [start_date,today])
