@@ -88,15 +88,15 @@ st.write(df_all.columns)
 #df_plot = df_all.rename(columns=custom_labels)
 
 ## plot with plotly
-#pio.renderers.default='browser'
-#pd.options.plotting.backend = "plotly"
-# pio.templates.default = "plotly"
-#fig = px.line(
-#    df_plot,
-#    x='Time',
-#    y=["Incoming short wave radiation","Outgoing short wave radiation","Corrected incoming long wave radiation","Corrected outgoing long wave radiation"] ,#['SWTop', 'SWBottom', 'LWTop_cor', 'LWBottom_cor'],
-#    labels=custom_labels
-#)
+pio.renderers.default='browser'
+pd.options.plotting.backend = "plotly"
+pio.templates.default = "plotly"
+fig = px.line(
+    df_plot,
+    x='Time',
+    y=["et_l"],
+    labels=['ET [mm]']
+)
 
 # fig = df_all.plot(x='TIMESTAMP',y=['SWTop','SWBottom','LWTop_cor','LWBottom_cor'], labels={"SWTop":"Incoming short wave radiation","SWBottom":"Outcoming short wave radiation","LWTop_cor":"Corrected incoming long wave radiation","LWBottom_cor":"Corrected outcoming long wave radiation"}) #,'Rn'])
 #fig.update_layout(hovermode="x unified",xaxis_title=None,yaxis_title='Radiation [W/m²]')
@@ -107,7 +107,7 @@ st.write(df_all.columns)
 #    fig.update_xaxes(range = [start_date,end_date + datetime.timedelta(days=1)])
 
 ## create simple dashboard
-#st.plotly_chart(fig)
+st.plotly_chart(fig)
 
 ## to do:
 ## plot Rn as well --> is also stored in crn4_data file instead of in crn4 file 
