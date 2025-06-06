@@ -76,14 +76,12 @@ st.write(df_all.columns)
 #df_all['LWBottom_cor'] = pd.to_numeric(df_all['LWBottomC_Avg'])
 #df_all['Rn'] =  (df_all['SWTop']-df_all['SWBottom'])+(df_all['LWTop_cor']-df_all['LWBottom_cor'])
 
+df_all['et_l'] = pd.to_numeric(df_all['et_l'])
+
 # Define custom labels
-#custom_labels = {
-##    "SWTop": "Incoming short wave radiation",
-#    "SWBottom": "Outgoing short wave radiation",
-#    "LWTop_cor": "Corrected incoming long wave radiation",
-#    "LWBottom_cor": "Corrected outgoing long wave radiation",
-#    "TIMESTAMP": "Time",
-#}
+custom_labels = {
+    "et_l": "evaporation [mm]",
+}
 
 #df_plot = df_all.rename(columns=custom_labels)
 
@@ -95,7 +93,7 @@ fig = px.line(
     df_all,
     x='Time',
     y=["et_l"],
-    labels=['ET [mm]']
+    labels=custom_labels,
 )
 
 # fig = df_all.plot(x='TIMESTAMP',y=['SWTop','SWBottom','LWTop_cor','LWBottom_cor'], labels={"SWTop":"Incoming short wave radiation","SWBottom":"Outcoming short wave radiation","LWTop_cor":"Corrected incoming long wave radiation","LWBottom_cor":"Corrected outcoming long wave radiation"}) #,'Rn'])
