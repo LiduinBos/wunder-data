@@ -92,7 +92,7 @@ pio.renderers.default='browser'
 pd.options.plotting.backend = "plotly"
 pio.templates.default = "plotly"
 fig = px.line(
-    df_plot,
+    df_all,
     x='Time',
     y=["et_l"],
     labels=['ET [mm]']
