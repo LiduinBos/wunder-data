@@ -91,7 +91,7 @@ pd.options.plotting.backend = "plotly"
 pio.templates.default = "plotly"
 fig = px.line(
     df_all,
-    x='Time',
+    x='TIMESTAMP',
     y=["et_l"],
     labels=custom_labels,
 )
