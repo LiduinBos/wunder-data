@@ -77,10 +77,13 @@ st.write(df_all.columns)
 #df_all['Rn'] =  (df_all['SWTop']-df_all['SWBottom'])+(df_all['LWTop_cor']-df_all['LWBottom_cor'])
 
 df_all['et_l'] = pd.to_numeric(df_all['et_l'])*48.0 ## including conversion from mm/30min to mm/day
+df_all['et_le_l'] = pd.to_numeric(df_all['le_l'])*0.035 ## simple conversion from le to et including conversion from mm/30min to mm/day
 
 # Define custom labels
 custom_labels = {
     "et_l": "evaporation [mm]",
+    "le_l": "latent heat [W/m2]",
+    "et_le_l": "converted latent heat [mm/day]",
 }
 
 #df_plot = df_all.rename(columns=custom_labels)
@@ -92,7 +95,7 @@ pio.templates.default = "plotly"
 fig = px.line(
     df_all,
     x='TIMESTAMP',
-    y=["et_l"],
+    y=["et_l","et_le_l"],
     labels=custom_labels,
 )
 
