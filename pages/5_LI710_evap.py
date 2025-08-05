@@ -88,18 +88,40 @@ custom_labels = {
     "et_le_l": "converted latent heat [mm/day]",
 }
 
-#df_plot = df_all.rename(columns=custom_labels)
+# Melt the DataFrame
+df_long = df_all.melt(id_vars='TIMESTAMP', value_vars=["et_l", "et_le_l"], var_name='variable', value_name='value')
 
-## plot with plotly
+# Map legend labels
+df_long['variable'] = df_long['variable'].map(custom_labels)
+
 pio.renderers.default='browser'
 pd.options.plotting.backend = "plotly"
 pio.templates.default = "plotly"
+# Plot
 fig = px.line(
-    df_all,
+    df_long,
     x='TIMESTAMP',
-    y=["et_l","et_le_l"],
-    labels=custom_labels,
+    y='value',
+    color='variable',  # Now it uses the custom names
+    labels={
+        'TIMESTAMP': 'Date',
+        'value': 'Value',
+        'variable': 'Legend'
+    }
 )
+
+#df_plot = df_all.rename(columns=custom_labels)
+
+## plot with plotly
+#pio.renderers.default='browser'
+#pd.options.plotting.backend = "plotly"
+#pio.templates.default = "plotly"
+#fig = px.line(
+#    df_all,
+#    x='TIMESTAMP',
+#    y=["et_l","et_le_l"],
+#    labels=custom_labels,
+#)
 
 # fig = df_all.plot(x='TIMESTAMP',y=['SWTop','SWBottom','LWTop_cor','LWBottom_cor'], labels={"SWTop":"Incoming short wave radiation","SWBottom":"Outcoming short wave radiation","LWTop_cor":"Corrected incoming long wave radiation","LWBottom_cor":"Corrected outcoming long wave radiation"}) #,'Rn'])
 #fig.update_layout(hovermode="x unified",xaxis_title=None,yaxis_title='Radiation [W/m²]')
