@@ -83,7 +83,7 @@ df_all['et_le_l'] = pd.to_numeric(df_all['le_l'])*0.035 ## simple conversion fro
 
 # Define custom labels
 custom_labels = {
-    "et_l": "evaporation [mm]",
+    "et_l": "evaporation [mm/day]",
     "le_l": "latent heat [W/m2]",
     "et_le_l": "converted latent heat [mm/day]",
 }
