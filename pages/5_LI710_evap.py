@@ -76,7 +76,7 @@ st.write(df_all.columns)
 #df_all['LWBottom_cor'] = pd.to_numeric(df_all['LWBottomC_Avg'])
 #df_all['Rn'] =  (df_all['SWTop']-df_all['SWBottom'])+(df_all['LWTop_cor']-df_all['LWBottom_cor'])
 
-df['et_l'] = df['et_l'].replace('NAN', 99999)
+df_all['et_l'] = df_all['et_l'].replace('NAN', 99999)
 
 df_all['et_l'] = pd.to_numeric(df_all['et_l'])*48.0 ## including conversion from mm/30min to mm/day
 df_all['et_le_l'] = pd.to_numeric(df_all['le_l'])*0.035 ## simple conversion from le to et including conversion from mm/30min to mm/day
