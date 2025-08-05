@@ -110,7 +110,7 @@ fig = px.line(
 #    fig.update_xaxes(range = [start_date,end_date + datetime.timedelta(days=1)])
 
 ## create simple dashboard
-st.plotly_chart(fig)
+st.plotly_chart(fig, use_container_width=True)
 
 ## to do:
 ## plot Rn as well --> is also stored in crn4_data file instead of in crn4 file 
