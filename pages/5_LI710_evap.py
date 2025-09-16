@@ -76,6 +76,8 @@ st.write(df_all.columns)
 #df_all['LWBottom_cor'] = pd.to_numeric(df_all['LWBottomC_Avg'])
 #df_all['Rn'] =  (df_all['SWTop']-df_all['SWBottom'])+(df_all['LWTop_cor']-df_all['LWBottom_cor'])
 
+st.write(df_all['et_l']
+
 df_all['et_l'] = df_all['et_l'].replace('NAN', '')
 df_all = df_all.replace('9999999', '')
 
