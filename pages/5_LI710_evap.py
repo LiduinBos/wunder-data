@@ -41,6 +41,7 @@ daterange = [d.strftime('%Y%m%d') for d in pd.date_range(start_date,end_date + d
 
 ## select parameter set
 pars = "LI710group0"
+pars2 = "LI710all"
 
 ## account credentials of ftp server from where data will be downloaded
 username = 'liduin'
@@ -51,7 +52,17 @@ password = 'WunDer@2024;'
 # and for the selected date range
 i=0
 for date in daterange:
-    url = "http://liduin:WunDer@2024;@majisysdemo.itc.utwente.nl/wunder/logger_files/Wenumseveld_EC/CR3000_Wenumseveld_"+pars+date+".dat"
+    # choose correct pars depending on the date
+    if date > "20250920":   # if your date is a string in YYYYMMDD format
+        pars_used = pars2
+    else:
+        pars_used = pars
+
+    url = (
+        "http://liduin:WunDer@2024;@majisysdemo.itc.utwente.nl/"
+        "wunder/logger_files/Wenumseveld_EC/"
+        "CR3000_Wenumseveld_" + pars_used + date + ".dat"
+    )
     ## download url
     urlData = requests.get(url, auth=(username, password)).content
     ## transform requests format to pandas
