@@ -50,6 +50,7 @@ password = 'WunDer@2024;'
 # Download data files
 # by making use of the requests python package
 # and for the selected date range
+df_all = pd.DataFrame()
 i=0
 for date in daterange:
     # choose correct pars depending on the date
