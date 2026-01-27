@@ -86,66 +86,68 @@ st.write(df_all.columns)
 #df_all['LWTop_cor'] = pd.to_numeric(df_all['LWTopC_Avg'])
 #df_all['LWBottom_cor'] = pd.to_numeric(df_all['LWBottomC_Avg'])
 #df_all['Rn'] =  (df_all['SWTop']-df_all['SWBottom'])+(df_all['LWTop_cor']-df_all['LWBottom_cor'])
+if len(df_all)>0:
+    df_all['et_l'] = df_all['et_l'].replace('NAN', '')
+    df_all['et_l'] = df_all['et_l'].replace(9999999, '')
+    df_all['le_l'] = df_all['le_l'].replace(9999999, '')
 
-df_all['et_l'] = df_all['et_l'].replace('NAN', '')
-df_all['et_l'] = df_all['et_l'].replace(9999999, '')
-df_all['le_l'] = df_all['le_l'].replace(9999999, '')
+    df_all['et_l'] = pd.to_numeric(df_all['et_l'])*48.0 ## including conversion from mm/30min to mm/day
+    df_all['et_le_l'] = pd.to_numeric(df_all['le_l'])*0.035 ## simple conversion from le to et including conversion from mm/30min to mm/day
 
-df_all['et_l'] = pd.to_numeric(df_all['et_l'])*48.0 ## including conversion from mm/30min to mm/day
-df_all['et_le_l'] = pd.to_numeric(df_all['le_l'])*0.035 ## simple conversion from le to et including conversion from mm/30min to mm/day
-
-# Define custom labels
-custom_labels = {
-    "et_l": "evaporation [mm/day]",
-    "le_l": "latent heat [W/m2]",
-    "et_le_l": "converted latent heat [mm/day]",
-}
-
-# Melt the DataFrame
-df_long = df_all.melt(id_vars='TIMESTAMP', value_vars=["et_l", "et_le_l"], var_name='variable', value_name='value')
-
-# Map legend labels
-df_long['variable'] = df_long['variable'].map(custom_labels)
-
-pio.renderers.default='browser'
-pd.options.plotting.backend = "plotly"
-pio.templates.default = "plotly"
-# Plot
-fig = px.line(
-    df_long,
-    x='TIMESTAMP',
-    y='value',
-    color='variable',  # Now it uses the custom names
-    labels={
-        'TIMESTAMP': 'Date',
-        'value': 'Value',
-        'variable': 'Legend'
+    # Define custom labels
+    custom_labels = {
+        "et_l": "evaporation [mm/day]",
+        "le_l": "latent heat [W/m2]",
+        "et_le_l": "converted latent heat [mm/day]",
     }
-)
 
-#df_plot = df_all.rename(columns=custom_labels)
+    # Melt the DataFrame
+    df_long = df_all.melt(id_vars='TIMESTAMP', value_vars=["et_l", "et_le_l"], var_name='variable', value_name='value')
 
-## plot with plotly
-#pio.renderers.default='browser'
-#pd.options.plotting.backend = "plotly"
-#pio.templates.default = "plotly"
-#fig = px.line(
-#    df_all,
-#    x='TIMESTAMP',
-#    y=["et_l","et_le_l"],
-#    labels=custom_labels,
-#)
+    # Map legend labels
+    df_long['variable'] = df_long['variable'].map(custom_labels)
 
-# fig = df_all.plot(x='TIMESTAMP',y=['SWTop','SWBottom','LWTop_cor','LWBottom_cor'], labels={"SWTop":"Incoming short wave radiation","SWBottom":"Outcoming short wave radiation","LWTop_cor":"Corrected incoming long wave radiation","LWBottom_cor":"Corrected outcoming long wave radiation"}) #,'Rn'])
-#fig.update_layout(hovermode="x unified",xaxis_title=None,yaxis_title='Radiation [W/m²]')
-## set date range maximum on end_date + 1
-#if end_date==today:
-#    fig.update_xaxes(range = [start_date,today])
-#else:
-#    fig.update_xaxes(range = [start_date,end_date + datetime.timedelta(days=1)])
+    pio.renderers.default='browser'
+    pd.options.plotting.backend = "plotly"
+    pio.templates.default = "plotly"
+    # Plot
+    fig = px.line(
+        df_long,
+        x='TIMESTAMP',
+        y='value',
+        color='variable',  # Now it uses the custom names
+        labels={
+            'TIMESTAMP': 'Date',
+            'value': 'Value',
+            'variable': 'Legend'
+        }
+    )
 
-## create simple dashboard
-st.plotly_chart(fig, use_container_width=True)
+    #df_plot = df_all.rename(columns=custom_labels)
 
-## to do:
-## plot Rn as well --> is also stored in crn4_data file instead of in crn4 file 
+    ## plot with plotly
+    #pio.renderers.default='browser'
+    #pd.options.plotting.backend = "plotly"
+    #pio.templates.default = "plotly"
+    #fig = px.line(
+    #    df_all,
+    #    x='TIMESTAMP',
+    #    y=["et_l","et_le_l"],
+    #    labels=custom_labels,
+    #)
+
+    # fig = df_all.plot(x='TIMESTAMP',y=['SWTop','SWBottom','LWTop_cor','LWBottom_cor'], labels={"SWTop":"Incoming short wave radiation","SWBottom":"Outcoming short wave radiation","LWTop_cor":"Corrected incoming long wave radiation","LWBottom_cor":"Corrected outcoming long wave radiation"}) #,'Rn'])
+    #fig.update_layout(hovermode="x unified",xaxis_title=None,yaxis_title='Radiation [W/m²]')
+    ## set date range maximum on end_date + 1
+    #if end_date==today:
+    #    fig.update_xaxes(range = [start_date,today])
+    #else:
+    #    fig.update_xaxes(range = [start_date,end_date + datetime.timedelta(days=1)])
+
+    ## create simple dashboard
+    st.plotly_chart(fig, use_container_width=True)
+
+    ## to do:
+    ## plot Rn as well --> is also stored in crn4_data file instead of in crn4 file 
+else:
+    st.write("Cannot find any data within the provided period")
