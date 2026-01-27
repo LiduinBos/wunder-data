@@ -80,12 +80,9 @@ for date in daterange:
         df_all = pd.concat([df_all,df2])
     i+=1
 st.write(df_all.columns)
-## determine net radiation
-# df_all['SWTop'] = pd.to_numeric(df_all['SWTop_Avg']) 
-#df_all['SWBottom'] = pd.to_numeric(df_all['SWBottom_Avg'])
-#df_all['LWTop_cor'] = pd.to_numeric(df_all['LWTopC_Avg'])
-#df_all['LWBottom_cor'] = pd.to_numeric(df_all['LWBottomC_Avg'])
-#df_all['Rn'] =  (df_all['SWTop']-df_all['SWBottom'])+(df_all['LWTop_cor']-df_all['LWBottom_cor'])
+
+required_cols = {"et_l", "le_l", "TIMESTAMP"}
+
 if not df_all.empty and required_cols.issubset(df_all.columns):
 
     df_all['et_l'] = df_all['et_l'].replace(['NAN', 9999999], pd.NA)
