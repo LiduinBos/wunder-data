@@ -84,7 +84,7 @@ st.write(df_all.columns)
 required_cols = {"et_l", "le_l", "TIMESTAMP"}
 
 if not df_all.empty and required_cols.issubset(df_all.columns):
-
+    st.write(df_all['et_l'])
     df_all['et_l'] = df_all['et_l'].replace(['NAN', 9999999], pd.NA)
     df_all['le_l'] = df_all['le_l'].replace(9999999, pd.NA)
 
