@@ -64,6 +64,28 @@ for date in daterange:
         "CR3000_Wenumseveld_" + pars_used + date + ".dat"
     )
     ## download url
+    urlData = requests.get(url, auth=(username, password)).content
+    ## transform requests format to pandas
+    # https://stackoverflow.com/questions/39213597/convert-text-data-from-requests-object-to-dataframe-with-pandas
+    rawData = pd.read_csv(io.StringIO(urlData.decode('utf-8')),skiprows=[0,2,3])
+    # ## remove header lines (1 and 2, keep 0 since this includes the abbreviation of the parameters)
+    # df = rawData.drop([1,2]).reset_index(drop=True)
+    # df.columns = df.iloc[0] ##--> header is not fully set yet, is now in row 0
+    # df2 = df.drop([0]).reset_index(drop=True)
+    df2 = rawData
+    ## concatenate all data to 1 dateframe
+    if i==0:
+        df_all = df2
+    else:
+        df_all = pd.concat([df_all,df2])
+    i+=1
+st.write(df_all.columns)
+## determine net radiation
+# df_all['SWTop'] = pd.to_numeric(df_all['SWTop_Avg']) 
+#df_all['SWBottom'] = pd.to_numeric(df_all['SWBottom_Avg'])
+#df_all['LWTop_cor'] = pd.to_numeric(df_all['LWTopC_Avg'])
+#df_all['LWBottom_cor'] = pd.to_numeric(df_all['LWBottomC_Avg'])
+#df_all['Rn'] =  (df_all['SWTop']-df_all['SWBottom'])+(df_all['LWTop_cor']-df_all['LWBottom_cor'])
 if not df_all.empty and required_cols.issubset(df_all.columns):
 
     df_all['et_l'] = df_all['et_l'].replace(['NAN', 9999999], pd.NA)
