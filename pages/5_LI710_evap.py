@@ -95,7 +95,7 @@ rawData_meteo = pd.read_csv(io.StringIO(urlData.decode('utf-8')))
 df_meteo = rawData_meteo.drop([0]).reset_index(drop=True)
 st.write(df_meteo.columns)
 ## determine 30 min aggregated data
-#df_meteo[''] = df_in.resample(re_int)[var].mean()
+df_meteo_Ta = df_meteo.resample('30min')['Air Temperature observation'].mean()
 
 ## start plotting
 required_cols = {"et_l", "le_l", "TIMESTAMP"}
