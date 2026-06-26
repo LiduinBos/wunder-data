@@ -320,7 +320,7 @@ fig5.data[0].update(
 # Add a box with statistics
 stats_text_temp = (
     f"<b>Statistics over 7 days</b><br>"
-    f"Average: {df_total_winddir_avg.apply(deg_to_compass):.2f} °<br>"
+    f"Average: {deg_to_compass(df_total_winddir_avg):.2f} °<br>"
 )
 
 fig5.add_annotation(
