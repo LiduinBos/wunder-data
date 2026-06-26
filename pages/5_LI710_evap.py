@@ -83,6 +83,35 @@ for date in daterange:
 # st.write(df_all.columns)
 
 ## determine Makkink ET based on weather station data
+
+def slope_vapour_pressure_curve(T):
+    """
+    Slope of saturation vapour pressure curve.
+    T in °C.
+    Output in kPa/°C.
+    """
+    es = 0.6108 * np.exp((17.27 * T) / (T + 237.3))
+    delta = 4098 * es / ((T + 237.3) ** 2)
+    return delta
+
+
+def makkink_daily_et0(tmean, rs_mj_m2_day):
+    """
+    Makkink reference ET [mm/day].
+
+    tmean: daily mean air temperature [°C]
+    rs_mj_m2_day: daily incoming global radiation [MJ/m²/day]
+    """
+    gamma = 0.066  # kPa/°C, approximate near sea level
+    lambda_v = 2.45  # MJ/kg
+
+    delta = slope_vapour_pressure_curve(tmean)
+
+    et0 = 0.65 * (delta / (delta + gamma)) * (rs_mj_m2_day / lambda_v)
+
+    # avoid negative values
+    return et0.clip(lower=0)
+
 # Download data file (gathered by API call performed by UTwente and stored in csv)
 # by making use of the requests python package
 # and for the selected date range
@@ -100,11 +129,14 @@ df_meteo['datetime'] = pd.to_datetime(df_meteo['Date'])
 df_meteo.set_index('datetime', inplace=True)
 
 df_meteo['Air Temperature observation'] = pd.to_numeric(df_meteo['Air Temperature observation'], errors='coerce')
-df_meteo_Ta = df_meteo.resample('30min')['Air Temperature observation'].mean()
+df_meteo_Ta = df_meteo.resample('d')['Air Temperature observation'].mean()
 df_meteo['Radiation observation'] = pd.to_numeric(df_meteo['Radiation observation'], errors='coerce')
-df_meteo_Rg = df_meteo.resample('30min')['Radiation observation'].mean()
+df_meteo_Rg_mj_m2 = df_meteo.resample('d')['Radiation observation'].mean()*(86400/1000000)
 
-st.write(df_meteo_Ta,df_meteo_Rg)
+TEMP_COL = "Air Temperature observation"        # change if needed
+RAD_COL = "Global radiation observation"        # change if needed; assumed W/m²
+
+df_meteo_mak = makkink_daily_et0(df_meteo_Ta, df_meteo_Rg_mj_m2)
 
 ## ----------------------
 ## start plotting
@@ -150,6 +182,8 @@ if not df_all.empty and required_cols.issubset(df_all.columns):
     df_all['TIMESTAMP'] = pd.to_datetime(df_all['TIMESTAMP'])
     df_all = df_all.set_index('TIMESTAMP')
     df_daily = df_all[['et_l', 'et_le_l']].resample('D').sum()
+
+    df_daily['et_mak'] = df_meteo_mak
 
     st.subheader("Daily evapotranspiration sum")
     
