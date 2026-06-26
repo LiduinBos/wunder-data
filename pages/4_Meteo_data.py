@@ -333,6 +333,8 @@ fig5.add_annotation(
     bordercolor="black",
     borderwidth=1
 )
+st.write(df_daily_winddir_avg)
+st.write(deg_to_compass(df_daily_winddir_avg))
 
 #------------------------------------
 ## page layout update
