@@ -89,7 +89,7 @@ if not df_all.empty and required_cols.issubset(df_all.columns):
     df_all['et_l'] = df_all['et_l'].replace(['NAN', 9999999], pd.NA)
     df_all['le_l'] = df_all['le_l'].replace(9999999, pd.NA)
 
-    df_all['et_l'] = pd.to_numeric(df_all['et_l'], errors='coerce') #* 48.0
+    df_all['et_l'] = pd.to_numeric(df_all['et_l'], errors='coerce')
     df_all['et_le_l'] = (pd.to_numeric(df_all['le_l'], errors='coerce') * 0.035)/48.0
     st.write(df_all['et_l'])
     custom_labels = {
