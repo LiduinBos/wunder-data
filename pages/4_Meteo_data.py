@@ -334,7 +334,7 @@ fig5.add_annotation(
     borderwidth=1
 )
 st.write(df_daily_winddir_avg)
-st.write(deg_to_compass(df_daily_winddir_avg))
+st.write(df_daily_winddir_avg.apply(deg_to_compass))
 
 #------------------------------------
 ## page layout update
