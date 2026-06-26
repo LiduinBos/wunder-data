@@ -76,19 +76,6 @@ for date in daterange:
     # df.columns = df.iloc[0] ##--> header is not fully set yet, is now in row 0
     # df2 = df.drop([0]).reset_index(drop=True)
     df2 = rawData
-
-    url_rad = (
-        "http://liduin:WunDer@2024;@majisysdemo.itc.utwente.nl/"
-        "wunder/logger_files/Wenumseveld_EC/"
-        "CR3000_Wenumseveld_" + pars3 + date + ".dat"
-    )
-    ## download url
-    urlData_rad = requests.get(url_rad, auth=(username, password)).content
-    ## transform requests format to pandas
-    # https://stackoverflow.com/questions/39213597/convert-text-data-from-requests-object-to-dataframe-with-pandas
-    rawData_rad = pd.read_csv(io.StringIO(urlData_rad.decode('utf-8')),skiprows=[0,2,3])
-    df_rad = rawData_rad
-
 # st.write(df_all.columns)
 
 ## determine Makkink ET based on weather station data
