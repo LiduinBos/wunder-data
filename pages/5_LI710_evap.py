@@ -113,7 +113,7 @@ if not df_all.empty and required_cols.issubset(df_all.columns):
         color='variable',
         labels={
             'TIMESTAMP': 'Date',
-            'value': 'Value',
+            'value': 'Evaporation [mm/30min]',
             'variable': 'Legend'
         }
     )
