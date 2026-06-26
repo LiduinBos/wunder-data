@@ -61,6 +61,17 @@ def numeric_mean(df_in,var,re_int,method):
 
     return df_out
 
+def deg_to_compass(deg):
+    directions = [
+        'N', 'NNE', 'NE', 'ENE',
+        'E', 'ESE', 'SE', 'SSE',
+        'S', 'SSW', 'SW', 'WSW',
+        'W', 'WNW', 'NW', 'NNW'
+    ]
+    
+    idx = int((deg / 22.5) + 0.5) % 16
+    return directions[idx]
+    
 ## needed statistics
 
 df['datetime'] = pd.to_datetime(df['Date'])
@@ -103,7 +114,6 @@ df_hourly_Tair_avg = numeric_mean(df,'Air Temperature observation','h','mean')
 df_total_Tair_avg = df_hourly_Tair_avg.mean()
 df_total_Tair_min = df_hourly_Tair_avg.min()
 df_total_Tair_max = df_hourly_Tair_avg.max()
-
 
 ## plot with plotly
 pio.renderers.default='browser'
@@ -310,7 +320,7 @@ fig5.data[0].update(
 # Add a box with statistics
 stats_text_temp = (
     f"<b>Statistics over 7 days</b><br>"
-    f"Average: {df_total_wind_avg:.2f} °<br>"
+    f"Average: {df_total_winddir_avg.apply(deg_to_compass):.2f} °<br>"
 )
 
 fig5.add_annotation(
