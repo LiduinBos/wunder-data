@@ -234,7 +234,7 @@ fig3.add_annotation(
 # Fourth Plot = wind direction
 #------------------------------------
 
- Example: your dataframe
+# Example: your dataframe
 df = df_all.copy()
 
 # Ensure numeric
