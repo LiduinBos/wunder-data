@@ -88,9 +88,7 @@ for date in daterange:
     # https://stackoverflow.com/questions/39213597/convert-text-data-from-requests-object-to-dataframe-with-pandas
     rawData_rad = pd.read_csv(io.StringIO(urlData_rad.decode('utf-8')),skiprows=[0,2,3])
     df_rad = rawData_rad
-    
-    ## concatenate all data to 1 dateframe
-    df_all = pd.concat([df_all,df_rad])
+
 # st.write(df_all.columns)
 
 ## determine Makkink ET based on weather station data
