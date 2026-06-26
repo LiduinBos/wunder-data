@@ -82,9 +82,22 @@ for date in daterange:
     i+=1
 # st.write(df_all.columns)
 
-## determine Makkink ET
+## determine Makkink ET based on weather station data
+# Download data file (gathered by API call performed by UTwente and stored in csv)
+# by making use of the requests python package
+# and for the selected date range
+url = "http://majisysdemo.itc.utwente.nl/wunder/get7days.py?location=z6-08820"
+## download url
+urlData = requests.get(url).content
+## transform requests format to pandas
+rawData_meteo = pd.read_csv(io.StringIO(urlData.decode('utf-8')))
+## remove header lines (1 and 2, keep 0 since this includes the abbreviation of the parameters)
+df_meteo = rawData_meteo.drop([0]).reset_index(drop=True)
+st.write(df_meteo.columns())
+## determine 30 min aggregated data
+#df_meteo[''] = df_in.resample(re_int)[var].mean()
 
-
+## start plotting
 required_cols = {"et_l", "le_l", "TIMESTAMP"}
 
 if not df_all.empty and required_cols.issubset(df_all.columns):
