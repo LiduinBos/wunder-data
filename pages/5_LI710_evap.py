@@ -94,13 +94,21 @@ rawData_meteo = pd.read_csv(io.StringIO(urlData.decode('utf-8')))
 ## remove header lines (1 and 2, keep 0 since this includes the abbreviation of the parameters)
 df_meteo = rawData_meteo.drop([0]).reset_index(drop=True)
 st.write(df_meteo.columns)
+
 ## determine 30 min aggregated data
 df_meteo['datetime'] = pd.to_datetime(df_meteo['Date'])
 df_meteo.set_index('datetime', inplace=True)
+
 df_meteo['Air Temperature observation'] = pd.to_numeric(df_meteo['Air Temperature observation'], errors='coerce')
 df_meteo_Ta = df_meteo.resample('30min')['Air Temperature observation'].mean()
+df_meteo['Radiation observation'] = pd.to_numeric(df_meteo['Radiation observation'], errors='coerce')
+df_meteo_Rg = df_meteo.resample('30min')['Radiation observation'].mean()
 
+st.write(df_meteo_Ta,df_meteo_Rg)
+
+## ----------------------
 ## start plotting
+## ----------------------
 required_cols = {"et_l", "le_l", "TIMESTAMP"}
 
 if not df_all.empty and required_cols.issubset(df_all.columns):
