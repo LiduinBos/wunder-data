@@ -43,6 +43,7 @@ daterange = [d.strftime('%Y%m%d') for d in pd.date_range(start_date,end_date + d
 ## select parameter set
 pars = "LI710group0"
 pars2 = "LI710all"
+pars3 = "cnr4data"
 
 ## account credentials of ftp server from where data will be downloaded
 username = 'liduin'
@@ -75,12 +76,21 @@ for date in daterange:
     # df.columns = df.iloc[0] ##--> header is not fully set yet, is now in row 0
     # df2 = df.drop([0]).reset_index(drop=True)
     df2 = rawData
+
+    url_rad = (
+        "http://liduin:WunDer@2024;@majisysdemo.itc.utwente.nl/"
+        "wunder/logger_files/Wenumseveld_EC/"
+        "CR3000_Wenumseveld_" + pars3 + date + ".dat"
+    )
+    ## download url
+    urlData_rad = requests.get(url_rad, auth=(username, password)).content
+    ## transform requests format to pandas
+    # https://stackoverflow.com/questions/39213597/convert-text-data-from-requests-object-to-dataframe-with-pandas
+    rawData_rad = pd.read_csv(io.StringIO(urlData_rad.decode('utf-8')),skiprows=[0,2,3])
+    df_rad = rawData_rad
+    
     ## concatenate all data to 1 dateframe
-    if i==0:
-        df_all = df2
-    else:
-        df_all = pd.concat([df_all,df2])
-    i+=1
+    df_all = pd.concat([df_all,df_rad])
 # st.write(df_all.columns)
 
 ## determine Makkink ET based on weather station data
@@ -137,7 +147,8 @@ df_meteo_Rg_mj_m2 = df_meteo.resample('d')['Radiation observation'].mean()*(8640
 TEMP_COL = "Air Temperature observation"        # change if needed
 RAD_COL = "Global radiation observation"        # change if needed; assumed W/m²
 
-df_meteo_mak = makkink_daily_et0(df_meteo_Ta, df_meteo_Rg_mj_m2)
+df_meteo_mak_ws = makkink_daily_et0(df_meteo_Ta, df_meteo_Rg_mj_m2)
+
 
 ## ----------------------
 ## start plotting
@@ -184,7 +195,7 @@ if not df_all.empty and required_cols.issubset(df_all.columns):
     df_all = df_all.set_index('TIMESTAMP')
     df_daily = df_all[['et_l', 'et_le_l']].resample('D').sum()
 
-    df_daily['et_mak'] = df_meteo_mak
+    df_daily['et_mak'] = df_meteo_mak_ws
 
     st.subheader("Daily evapotranspiration sum")
     st.write("Makkink can only be determined for the last 7 days")
