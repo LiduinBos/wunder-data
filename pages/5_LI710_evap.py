@@ -93,7 +93,7 @@ urlData = requests.get(url).content
 rawData_meteo = pd.read_csv(io.StringIO(urlData.decode('utf-8')))
 ## remove header lines (1 and 2, keep 0 since this includes the abbreviation of the parameters)
 df_meteo = rawData_meteo.drop([0]).reset_index(drop=True)
-st.write(df_meteo.columns())
+st.write(df_meteo.columns)
 ## determine 30 min aggregated data
 #df_meteo[''] = df_in.resample(re_int)[var].mean()
 
