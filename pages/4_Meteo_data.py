@@ -277,7 +277,7 @@ fig4.update_layout(
     legend_title='Wind speed [m/s]'
 )
 
-st.plotly_chart(fig, use_container_width=True)
+st.plotly_chart(fig4, use_container_width=True)
 
 
 #------------------------------------
