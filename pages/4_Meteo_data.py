@@ -291,3 +291,7 @@ st.plotly_chart(fig2)
 st.subheader("Windspeed")
 st.plotly_chart(fig3)
 
+# Third Plot Section
+st.subheader("Wind direction")
+st.plotly_chart(fig4)
+
