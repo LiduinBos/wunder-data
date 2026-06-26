@@ -345,12 +345,11 @@ st.plotly_chart(fig3)
 
 # Fourth Plot Section
 st.subheader("Wind direction")
-st.plotly_chart(fig4)
+st.plotly_chart(fig4, use_container_width=True)
 
 # Fith Plot Section
 st.subheader("Wind direction - timeseries")
 st.plotly_chart(fig5)
 
 
-st.plotly_chart(fig4, use_container_width=True)
 
