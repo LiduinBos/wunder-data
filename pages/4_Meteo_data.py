@@ -277,9 +277,6 @@ fig4.update_layout(
     legend_title='Wind speed [m/s]'
 )
 
-st.plotly_chart(fig4, use_container_width=True)
-
-
 #------------------------------------
 ## page layout update
 #------------------------------------
@@ -301,5 +298,5 @@ st.plotly_chart(fig3)
 
 # Third Plot Section
 st.subheader("Wind direction")
-st.plotly_chart(fig4)
+st.plotly_chart(fig4, use_container_width=True)
 
