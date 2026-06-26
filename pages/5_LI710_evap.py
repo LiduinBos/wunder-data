@@ -120,6 +120,8 @@ if not df_all.empty and required_cols.issubset(df_all.columns):
 
     st.plotly_chart(fig, use_container_width=True)
 
+    df_all['TIMESTAMP'] = pd.to_datetime(df_all['TIMESTAMP'])
+    df_all = df_all.set_index('TIMESTAMP')
     df_daily = df_all[['et_l', 'et_le_l']].resample('D').sum()
 
     st.subheader("Daily evapotranspiration sum")
