@@ -362,6 +362,7 @@ st.subheader("Wind direction - timeseries")
 st.plotly_chart(fig5)
 
 # st.write(df_daily_winddir_avg)
+st.write("Daily averaged wind direction")
 st.write(df_daily_winddir_avg.apply(deg_to_compass))
 
 
