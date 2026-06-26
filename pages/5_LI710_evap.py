@@ -191,8 +191,8 @@ if not df_all.empty and required_cols.issubset(df_all.columns):
     st.dataframe(
         df_daily.reset_index().rename(columns={
             "TIMESTAMP": "Date",
-            "et_l": "ET (eddypro) [mm/day]",
-            "et_le_l": "ET (LE converted) [mm/day]",
+            "et_l": "ETa (LI-710) [mm/day]",
+            "et_le_l": "ETa (LI-710, LE converted) [mm/day]",
             "et_mak": "ET (Makkink reference) [mm/day]",
         }),
         use_container_width=True
