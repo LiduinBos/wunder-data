@@ -333,8 +333,6 @@ fig5.add_annotation(
     bordercolor="black",
     borderwidth=1
 )
-# st.write(df_daily_winddir_avg)
-st.write(df_daily_winddir_avg.apply(deg_to_compass))
 
 #------------------------------------
 ## page layout update
@@ -363,5 +361,7 @@ st.plotly_chart(fig4, use_container_width=True)
 st.subheader("Wind direction - timeseries")
 st.plotly_chart(fig5)
 
+# st.write(df_daily_winddir_avg)
+st.write(df_daily_winddir_avg.apply(deg_to_compass))
 
 
