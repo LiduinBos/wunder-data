@@ -93,7 +93,7 @@ df_total_wind_max = df_hourly_wind_avg.max()
 ## wind direction
 df_daily_winddir_avg = numeric_mean(df,'Wind direction observation','d','mean')
 df_hourly_winddir_avg = numeric_mean(df,'Wind direction observation','h','mean')
-df_total_winddir_avg = df_hourly_wind_avg.mean()
+df_total_winddir_avg = df_hourly_winddir_avg.mean()
 
 ## air temperature
 df_daily_Tair_min = numeric_mean(df,'Air Temperature observation','d','min')
