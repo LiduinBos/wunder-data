@@ -266,7 +266,14 @@ fig4 = px.bar_polar(
     theta='wd_bin',
     color='ws_bin',
     template='plotly',
-    color_discrete_sequence=px.colors.sequential.Turbo,
+    color_discrete_sequence=[
+        "#56B4E9",  # light blue
+        "#009E73",  # green
+        "#F0E442",  # yellow
+        "#E69F00",  # orange
+        "#D55E00",  # red-orange
+        "#CC79A7"   # purple
+    ],
 )
 
 fig4.update_layout(
