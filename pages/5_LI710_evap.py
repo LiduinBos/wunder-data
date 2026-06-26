@@ -192,7 +192,8 @@ if not df_all.empty and required_cols.issubset(df_all.columns):
         df_daily.reset_index().rename(columns={
             "TIMESTAMP": "Date",
             "et_l": "ET (eddypro) [mm/day]",
-            "et_le_l": "ET (LE converted) [mm/day]"
+            "et_le_l": "ET (LE converted) [mm/day]",
+            "et_mak": "ET (Makkink reference) [mm/day]",
         }),
         use_container_width=True
     )
