@@ -234,43 +234,47 @@ fig3.add_annotation(
 # Fourth Plot = wind direction
 #------------------------------------
 
-fig4 = px.line(
-    df_hourly_wind_avg,
-    x=df_hourly_wind_avg.index,
-    y='Wind speed observation',
-    labels={'x': 'Date', 'Wind speed observation': 'Wind speed [m/s]'},
-)
-fig4.update_traces(marker=dict(size=8, symbol='circle'), line=dict(color='blue'))
+ Example: your dataframe
+df = df_all.copy()
 
-fig4.update_layout(hovermode="x unified",
-                  xaxis_title='Date',
-                  yaxis_title='Wind speed [m/s]',
-                  margin=dict(r=150), # Add extra margin to make space for the box)
+# Ensure numeric
+df['Wind speed observation'] = pd.to_numeric(df['Wind speed observation'], errors='coerce')
+df['Wind direction observation'] = pd.to_numeric(df['Wind direction observation'], errors='coerce')
+
+# Remove NaNs
+df = df.dropna(subset=['Wind direction observation', 'Wind speed observation'])
+
+# --- bin wind speed ---
+bins = [0, 2, 4, 6, 8, 10, 20]
+labels = ['0-2', '2-4', '4-6', '6-8', '8-10', '10+']
+df['ws_bin'] = pd.cut(df['Wind speed observation'], bins=bins, labels=labels)
+
+# --- bin wind direction into sectors ---
+df['wd_bin'] = (df['Wind direction observation'] // 22.5) * 22.5  # 16 sectors
+
+# compute frequency table
+df_ros = df.groupby(['wd_bin', 'ws_bin']).size().reset_index(name='frequency')
+
+# --- plot windrose ---
+fig4 = px.bar_polar(
+    df_ros,
+    r='frequency',
+    theta='wd_bin',
+    color='ws_bin',
+    template='plotly',
+    color_discrete_sequence=px.colors.sequential.Plasma,
 )
 
-# Update hover template
-fig4.data[0].update(
-    hovertemplate='%{x}<br>Wind speed: %{y:.2f} m/s<extra></extra>'
+fig4.update_layout(
+    title='Wind direction distribution',
+    polar=dict(
+        angularaxis=dict(rotation=90, direction="clockwise")
+    ),
+    legend_title='Wind speed [m/s]'
 )
 
-# Add a box with statistics
-stats_text_temp = (
-    f"<b>Statistics over 7 days</b><br>"
-    f"Average: {df_total_wind_avg:.2f} m/s<br>"
-    f"Min: {df_total_wind_min:.2f} m/s<br>"
-    f"Max: {df_total_wind_max:.2f} m/s"
-)
+st.plotly_chart(fig, use_container_width=True)
 
-fig4.add_annotation(
-    text=stats_text_temp,
-    xref="paper", yref="paper",  # Position in terms of the plot (0-1 range)
-    x=1.2, y=0.95,  # Top-right corner of the plot
-    showarrow=False,  # No arrow
-    align="left",
-    bgcolor="rgba(255, 255, 255, 0.8)",  # Background color with transparency
-    bordercolor="black",
-    borderwidth=1
-)
 
 #------------------------------------
 ## page layout update
