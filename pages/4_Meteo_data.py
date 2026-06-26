@@ -285,6 +285,46 @@ fig4.update_layout(
 )
 
 #------------------------------------
+# Fith Plot = wind direction
+#------------------------------------
+
+fig5 = px.line(
+    df_hourly_winddir_avg,
+    x=df_hourly_winddir_avg.index,
+    y='Wind direction observation',
+    labels={'x': 'Date', 'Wind direction observation': 'Wind direction [$^\circ$]'},
+)
+fig5.update_traces(marker=dict(size=8, symbol='circle'), line=dict(color='blue'))
+
+fig5.update_layout(hovermode="x unified",
+                  xaxis_title='Date',
+                  yaxis_title='Wind direction [$^\circ$]',
+                  margin=dict(r=150), # Add extra margin to make space for the box)
+)
+
+# Update hover template
+fig5.data[0].update(
+    hovertemplate='%{x}<br>Wind direction: %{y:.2f} m/s<extra></extra>'
+)
+
+# Add a box with statistics
+stats_text_temp = (
+    f"<b>Statistics over 7 days</b><br>"
+    f"Average: {df_total_wind_avg:.2f} m/s<br>"
+)
+
+fig5.add_annotation(
+    text=stats_text_temp,
+    xref="paper", yref="paper",  # Position in terms of the plot (0-1 range)
+    x=1.2, y=0.95,  # Top-right corner of the plot
+    showarrow=False,  # No arrow
+    align="left",
+    bgcolor="rgba(255, 255, 255, 0.8)",  # Background color with transparency
+    bordercolor="black",
+    borderwidth=1
+)
+
+#------------------------------------
 ## page layout update
 #------------------------------------
 
@@ -303,7 +343,14 @@ st.plotly_chart(fig2)
 st.subheader("Windspeed")
 st.plotly_chart(fig3)
 
-# Third Plot Section
+# Fourth Plot Section
 st.subheader("Wind direction")
+st.plotly_chart(fig4)
+
+# Fith Plot Section
+st.subheader("Wind direction - timeseries")
+st.plotly_chart(fig5)
+
+
 st.plotly_chart(fig4, use_container_width=True)
 
