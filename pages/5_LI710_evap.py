@@ -97,6 +97,7 @@ st.write(df_meteo.columns)
 ## determine 30 min aggregated data
 df_meteo['datetime'] = pd.to_datetime(df_meteo['Date'])
 df_meteo.set_index('datetime', inplace=True)
+df_meteo['Air Temperature observation'] = pd.to_numeric(df_meteo['Air Temperature observation'], errors='coerce')
 df_meteo_Ta = df_meteo.resample('30min')['Air Temperature observation'].mean()
 
 ## start plotting
