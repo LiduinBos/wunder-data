@@ -276,14 +276,6 @@ fig4 = px.bar_polar(
     ],
 )
 
-fig4.update_layout(
-    title='Wind direction distribution',
-    polar=dict(
-        angularaxis=dict(rotation=90, direction="clockwise")
-    ),
-    legend_title='Wind speed [m/s]'
-)
-
 direction_labels = {
     0: 'N', 22.5: 'NNE', 45: 'NE', 67.5: 'ENE',
     90: 'E', 112.5: 'ESE', 135: 'SE', 157.5: 'SSE',
@@ -295,6 +287,13 @@ fig4.update_traces(
     hovertemplate='Direction: %{theta}°<br>Frequency: %{r:.2f}%'
 )
 
+fig4.update_layout(
+    title='Wind direction distribution',
+    polar=dict(
+        angularaxis=dict(rotation=90, direction="clockwise")
+    ),
+    legend_title='Wind speed [m/s]'
+)
 
 #------------------------------------
 ## page layout update
