@@ -82,9 +82,6 @@ for date in daterange:
     i+=1
 st.write(df_all.columns)
 
-df_all['TIMESTAMP'] = pd.to_datetime(df_all['TIMESTAMP'])
-df_all = df_all.set_index('TIMESTAMP')
-
 required_cols = {"et_l", "le_l", "TIMESTAMP"}
 
 if not df_all.empty and required_cols.issubset(df_all.columns):
