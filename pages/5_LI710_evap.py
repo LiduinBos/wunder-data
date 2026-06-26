@@ -80,7 +80,10 @@ for date in daterange:
     else:
         df_all = pd.concat([df_all,df2])
     i+=1
-# st.write(df_all.columns)
+st.write(df_all.columns)
+
+## determine Makkink ET
+
 
 required_cols = {"et_l", "le_l", "TIMESTAMP"}
 
