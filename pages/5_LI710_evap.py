@@ -187,6 +187,7 @@ if not df_all.empty and required_cols.issubset(df_all.columns):
     df_daily['et_mak'] = df_meteo_mak
 
     st.subheader("Daily evapotranspiration sum")
+    st.write("Makkink can only be determined for the last 7 days")
     
     st.dataframe(
         df_daily.reset_index().rename(columns={
