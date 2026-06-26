@@ -21,6 +21,7 @@ import pandas as pd
 import io
 
 import datetime
+import numpy as np
 
 # set start and end date
 # make it variables that can be chosen in the app as a given range
