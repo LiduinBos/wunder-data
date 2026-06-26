@@ -266,7 +266,7 @@ fig4 = px.bar_polar(
     theta='wd_bin',
     color='ws_bin',
     template='plotly',
-    color_discrete_sequence=px.colors.sequential.Plasma,
+    color_discrete_sequence=px.colors.sequential.Viridis,
 )
 
 fig4.update_layout(
