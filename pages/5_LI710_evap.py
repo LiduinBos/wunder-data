@@ -82,6 +82,9 @@ for date in daterange:
     i+=1
 st.write(df_all.columns)
 
+df_all['TIMESTAMP'] = pd.to_datetime(df_all['TIMESTAMP'])
+df_all = df_all.set_index('TIMESTAMP')
+
 required_cols = {"et_l", "le_l", "TIMESTAMP"}
 
 if not df_all.empty and required_cols.issubset(df_all.columns):
@@ -119,6 +122,20 @@ if not df_all.empty and required_cols.issubset(df_all.columns):
     )
 
     st.plotly_chart(fig, use_container_width=True)
+
+    df_daily = df_all[['et_l', 'et_le_l']].resample('D').sum()
+
+    st.subheader("Daily evapotranspiration sum")
+    
+    st.dataframe(
+        df_daily.reset_index().rename(columns={
+            "TIMESTAMP": "Date",
+            "et_l": "ET (eddypro) [mm/day]",
+            "et_le_l": "ET (LE converted) [mm/day]"
+        }),
+        use_container_width=True
+    )
+
 
 else:
     st.warning("⚠️ No ET / LE data found for the selected date range.")
