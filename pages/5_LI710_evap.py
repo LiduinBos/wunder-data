@@ -142,7 +142,7 @@ df_meteo_mak = makkink_daily_et0(df_meteo_Ta, df_meteo_Rg_mj_m2)
 ## ----------------------
 ## start plotting
 ## ----------------------
-required_cols = {"et_l", "le_l", "TIMESTAMP"}
+required_cols = {"et_l", "le_l", "TIMESTAMP","diag_l"}
 
 if not df_all.empty and required_cols.issubset(df_all.columns):
     
