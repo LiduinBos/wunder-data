@@ -199,8 +199,15 @@ if not df_all.empty and required_cols.issubset(df_all.columns):
         use_container_width=True
     )
 
+    df_diag = df_all.melt(
+        id_vars='TIMESTAMP',
+        value_vars=["diag_l"],
+        var_name='variable',
+        value_name='value'
+    )
+    
     fig2 = px.line(
-        df_all,
+        df_diag,
         x='TIMESTAMP',
         y='value',
         color='variable',
