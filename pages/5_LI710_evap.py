@@ -200,7 +200,7 @@ if not df_all.empty and required_cols.issubset(df_all.columns):
     )
 
     fig2 = px.line(
-        df_long,
+        df_all,
         x='TIMESTAMP',
         y='value',
         color='variable',
