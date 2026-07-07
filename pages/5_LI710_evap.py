@@ -198,15 +198,8 @@ if not df_all.empty and required_cols.issubset(df_all.columns):
         }),
         use_container_width=True
     )
-
-
-    st.write(df_long)
-    st.write(df_all['diag_l'])
     
-    fig2_df = pd.DataFrame({
-        'TIMESTAMP': df_long['TIMESTAMP'].values,
-        'diag_l': df_all['diag_l'].values
-    })
+    fig2_df = df_all.reset_index()
 
     fig2 = px.line(
         fig2_df,
