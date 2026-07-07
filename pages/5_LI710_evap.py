@@ -199,6 +199,19 @@ if not df_all.empty and required_cols.issubset(df_all.columns):
         use_container_width=True
     )
 
+    fig = px.line(
+        df_long,
+        x='TIMESTAMP',
+        y='value',
+        color='variable',
+        labels={
+            'TIMESTAMP': 'Date',
+            'value': 'diag_l',
+            'variable': 'Legend'
+        }
+    )
+
+    st.plotly_chart(fig, use_container_width=True)
 
 else:
     st.warning("⚠️ No ET / LE data found for the selected date range.")
