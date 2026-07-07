@@ -199,22 +199,19 @@ if not df_all.empty and required_cols.issubset(df_all.columns):
         use_container_width=True
     )
 
-    df_diag = df_all.melt(
-        id_vars='TIMESTAMP',
-        value_vars=["diag_l"],
-        var_name='variable',
-        value_name='value'
-    )
-    st.write(df_diag)
+    
+    fig2_df = pd.DataFrame({
+        'TIMESTAMP': df_long['TIMESTAMP'].values,
+        'diag_l': df_all['diag_l'].values
+    })
+
     fig2 = px.line(
-        df_diag,
+        fig2_df,
         x='TIMESTAMP',
-        y='value',
-        color='variable',
+        y='diag_l',
         labels={
             'TIMESTAMP': 'Date',
-            'value': 'diag_l',
-            'variable': 'Legend'
+            'diag_l': 'diag_l'
         }
     )
 
