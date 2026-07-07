@@ -199,6 +199,9 @@ if not df_all.empty and required_cols.issubset(df_all.columns):
         use_container_width=True
     )
 
+
+    st.write(df_long)
+    st.write(df_all['diag_l'])
     
     fig2_df = pd.DataFrame({
         'TIMESTAMP': df_long['TIMESTAMP'].values,
