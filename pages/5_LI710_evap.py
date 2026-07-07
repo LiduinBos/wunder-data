@@ -198,7 +198,8 @@ if not df_all.empty and required_cols.issubset(df_all.columns):
         }),
         use_container_width=True
     )
-    
+
+    st.subheader("Diagnostics")
     fig2_df = df_all.reset_index()
 
     fig2 = px.line(
