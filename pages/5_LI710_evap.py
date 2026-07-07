@@ -205,7 +205,7 @@ if not df_all.empty and required_cols.issubset(df_all.columns):
         var_name='variable',
         value_name='value'
     )
-    
+    st.write(df_diag)
     fig2 = px.line(
         df_diag,
         x='TIMESTAMP',
